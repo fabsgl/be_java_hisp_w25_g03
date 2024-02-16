@@ -1,4 +1,4 @@
-package com.socialMeli.socialMeli;
+package com.socialMeli;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
