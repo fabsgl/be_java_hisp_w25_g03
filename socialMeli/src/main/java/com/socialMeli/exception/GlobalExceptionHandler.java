@@ -11,5 +11,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> NotFoundException(NotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+    @ExceptionHandler(UserIsNotVendorException.class)
+    public ResponseEntity<?> userIsNotVendorException(UserIsNotVendorException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
 
 }
