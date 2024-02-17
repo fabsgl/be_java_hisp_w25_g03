@@ -20,4 +20,9 @@ public class UserRepository implements IUserRepository{
     public User findUserByUserId(Integer userId) {
         return userBd.stream().filter(user -> user.getId().equals(userId)).findFirst().orElse(null);
     }
+
+    @Override
+    public User findUserToFollowById(Integer userIdToFollow) {
+        return userBd.stream().filter(user -> user.getId().equals(userIdToFollow)).findFirst().orElse(null);
+    }
 }

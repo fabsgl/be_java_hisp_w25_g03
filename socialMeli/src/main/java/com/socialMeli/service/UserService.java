@@ -19,7 +19,21 @@ public class UserService implements IUserService {
     @Override
     public MessageDTO newFollow(Integer userId, Integer userIdToFollow) {
 
-        return null;
+        User user = userRepository.findUserByUserId(userId);
+        User userToFollow = userRepository.findUserToFollowById(userIdToFollow);
+
+        if (user != null) {
+            if(userToFollow != null) {
+                String messageSuccess = "You have followed " + userToFollow;
+                return new MessageDTO(messageSuccess);
+            }
+            else {
+                throw new NotFoundException("No se encontró el usuario a seguir");
+            }
+        }
+        else {
+            throw new NotFoundException("No se encontró el usuario");
+        }
     }
 
     @Override

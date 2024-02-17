@@ -3,9 +3,11 @@ package com.socialMeli.controller;
 import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.service.IUserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,5 +18,10 @@ public class UserController {
     @GetMapping("/users/{userId}/followers/count")
     public ResponseEntity<VendorFollowCountDto> getFollowerCount(@PathVariable Integer userId) {
         return ResponseEntity.ok().body(userService.getFollowerCount(userId));
+    }
+
+    @PostMapping("/users/{userId}/follow/{userIdToFollow}")
+    public ResponseEntity<?> follow(@PathVariable Integer userId, @PathVariable Integer userIdToFollow) {
+        return new ResponseEntity<>(userService.newFollow(userId, userIdToFollow), HttpStatus.OK);
     }
 }

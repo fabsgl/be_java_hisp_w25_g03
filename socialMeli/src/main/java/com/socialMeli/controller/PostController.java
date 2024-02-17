@@ -24,10 +24,5 @@ public class PostController {
     public void obtainLastPublicationsByTheFollowedVendors(){
 
     }
-
-    @PostMapping("/users/{userId}/follow/{userIdToFollow}")
-    public ResponseEntity<?> follow(@PathVariable Integer userId, @PathVariable Integer userIdToFollow) {
-        return new ResponseEntity<>(userService.newFollow(userId, userIdToFollow), HttpStatus.OK);
-    }
 }
 
