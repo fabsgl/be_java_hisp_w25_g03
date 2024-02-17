@@ -1,5 +1,9 @@
 package com.socialMeli.service;
 
+import com.socialMeli.dto.response.MessageDTO;
+import com.socialMeli.dto.response.VendorFollowCountDto;
+
 public interface IUserService {
-    Object newFollow(Integer userId, Integer userIdToFollow);
+    MessageDTO newFollow(Integer userId, Integer userIdToFollow);
+    VendorFollowCountDto getFollowerCount(Integer userId);
 }
