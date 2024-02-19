@@ -24,4 +24,5 @@ public class Post {
     Integer category;
     Double price;
     Integer userId;
+
 }
