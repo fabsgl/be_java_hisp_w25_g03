@@ -22,5 +22,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> userFollowException(UserFollowException e){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<?> invalidDataException(InvalidDataException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
 }
