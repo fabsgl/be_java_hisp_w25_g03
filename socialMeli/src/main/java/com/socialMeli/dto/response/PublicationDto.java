@@ -1,5 +1,6 @@
 package com.socialMeli.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialMeli.dto.request.PostDTO;
 
 import lombok.AccessLevel;
@@ -12,8 +13,9 @@ import java.util.List;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@NoArgsConstructor
 public class PublicationDto {
-    Integer user_id;
+    @JsonProperty("user_id")
+    Integer userId;
+    @JsonProperty("posts")
     List<PostDto> postDTOList;
 }

@@ -33,8 +33,7 @@ public class UserController {
     }
     @GetMapping("/users/{userId}/followed/list")
     public ResponseEntity<FollowedListDto> getFollowedList(@PathVariable Integer userId) {
-        FollowedListDto followedListResponse = userService.getFollowedList(userId);
-        return ResponseEntity.ok().body(followedListResponse);
+        return ResponseEntity.ok().body(userService.getFollowedList(userId));
     }
 
     @PostMapping("/users/{userId}/follow/{userIdToFollow}")

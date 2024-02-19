@@ -1,5 +1,6 @@
 package com.socialMeli.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialMeli.entity.Product;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PostDto {
     Integer id;
-    Integer user_id;
+    @JsonProperty("user_id")
+    Integer userId;
     LocalDate date;
     Product product;
     Integer category;
