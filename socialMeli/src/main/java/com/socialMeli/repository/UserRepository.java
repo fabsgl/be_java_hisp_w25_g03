@@ -1,6 +1,8 @@
 package com.socialMeli.repository;
 
 import com.socialMeli.entity.User;
+import com.socialMeli.exception.NotFoundException;
+import com.socialMeli.entity.UserType;
 import com.socialMeli.entity.UserType;
 import org.springframework.stereotype.Repository;
 
@@ -11,18 +13,50 @@ import java.util.Optional;
 @Repository
 public class UserRepository implements IUserRepository {
 
-    private List<User> userBd;
-
-    public UserRepository() {
-        this.userBd = new ArrayList<>();
-        userBd.add(new User(1,"agustin",List.of(2),List.of(2), UserType.VENDOR));
-        userBd.add(new User(2,"agustin",List.of(1),List.of(1), UserType.VENDOR));
-    }
+    List<User> userBd;
 
     @Override
     public Optional<User> findUserByUserId(Integer userId) {
         return userBd.stream().filter(user -> user.getId().equals(userId)).findFirst();
     }
+
+    @Override
+    public List<User> getAllFollowers(List<Integer> followersIds) {
+        return followersIds.stream()
+                .map(id -> findUserByUserId(id)
+                        .orElseThrow(() -> new NotFoundException("Seguidor con id " + id + " no encontrado")))
+                .toList();
+        //todo Hay forma de hacerlo con streams sin excepciones porque doy por hecho que existe el Id?
+    }
+
+    public UserRepository() {
+        this.userBd = new ArrayList<>(
+                List.of(
+                        new User(1,namesList[0],new ArrayList<>(),List.of(8,9,10), UserType.CLIENT),
+                        new User(2,namesList[1],new ArrayList<>(),List.of(0), UserType.CLIENT),
+                        new User(3,namesList[2],new ArrayList<>(),List.of(0), UserType.CLIENT),
+                        new User(4,namesList[3],new ArrayList<>(),List.of(0), UserType.CLIENT),
+                        new User(5,namesList[4],new ArrayList<>(),List.of(0), UserType.CLIENT),
+                        new User(6,namesList[5],new ArrayList<>(),List.of(0), UserType.CLIENT),
+                        new User(7,namesList[6],new ArrayList<>(),List.of(0), UserType.CLIENT),
+                        new User(8,namesList[7],List.of(1),List.of(0), UserType.VENDOR),
+                        new User(9,namesList[8],List.of(1),List.of(0), UserType.VENDOR),
+                        new User(10,namesList[9],List.of(1),List.of(0), UserType.VENDOR)
+                )
+        );
+    }
+    String[] namesList = {
+            "Luciano Gonzalez",
+            "Sofia Fernandez",
+            "Mateo Rodriguez",
+            "Valentina Lopez",
+            "Nicolas Martinez",
+            "Camila Garcia",
+            "Dante Silva",
+            "Valeria Ramirez",
+            "Tomas Castro",
+            "Victoria Acosta"
+    };
 
     @Override
     public void unfollowUser(User user, User userToUnfollow) {
