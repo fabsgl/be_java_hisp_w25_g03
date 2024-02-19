@@ -1,5 +1,6 @@
 package com.socialMeli.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialMeli.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,14 +11,17 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 public class VendorFollowCountDto {
-    Integer user_id;
-    String user_name;
-    Integer followers_count;
+    @JsonProperty("user_id")
+    Integer userId;
+    @JsonProperty("user_name")
+    String userName;
+    @JsonProperty("followers_count")
+    Integer followerCount;
 
     public VendorFollowCountDto(User user) {
-        this.user_id = user.getId();
-        this.user_name = user.getName();
-        this.followers_count = user.getFollowersId().size();
+        this.userId = user.getId();
+        this.userName = user.getName();
+        this.followerCount = user.getFollowersId().size();
 
     }
 

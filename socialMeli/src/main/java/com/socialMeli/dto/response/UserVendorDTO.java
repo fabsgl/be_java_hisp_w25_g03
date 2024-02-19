@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-//@AllArgsConstructor
-//@NoArgsConstructor
-public class PostDTO {
-
+public class UserVendorDTO {
+    int user_id;
+    String user_name;
 }
