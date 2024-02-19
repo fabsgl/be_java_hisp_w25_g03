@@ -15,5 +15,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> userIsNotVendorException(UserIsNotVendorException e){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
+    @ExceptionHandler(UserFollowException.class)
+    public ResponseEntity<?> userFollowException(UserFollowException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
 
 }
