@@ -25,9 +25,12 @@ public class UserService implements IUserService {
         User user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
         User userFollow = userRepository.findUserByUserId(userIdToFollow).orElseThrow(() -> new NotFoundException("No se encontro el usuario a seguir"));
 
-        boolean userIsMatch = user.getFollowersId().stream().noneMatch(id -> id.equals(userIdToFollow));
+        if (!VENDOR.equals(userFollow.getType()))
+            throw new UserIsNotVendorException("El usuario " + userFollow.getName() + " a seguir no es un vendedor");
 
-        if (userIsMatch) {
+        boolean userIsMatch = user.getFollowedId().contains(userIdToFollow);  //stream().noneMatch(id -> id.equals(userIdToFollow));
+
+        if (!userIsMatch) {
             userRepository.followUser(user, userFollow);
             return new MessageDTO("Comenzaste a seguir al usuario " + userFollow.getName());
         }
@@ -72,5 +75,4 @@ public class UserService implements IUserService {
                 .findUserByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(errorMessage));
     }
-
 }
