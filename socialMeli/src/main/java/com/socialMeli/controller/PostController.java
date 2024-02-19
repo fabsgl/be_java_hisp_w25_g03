@@ -1,14 +1,16 @@
 package com.socialMeli.controller;
 
 import com.socialMeli.dto.request.PostDTO;
+import com.socialMeli.dto.response.PublicationDto;
 import com.socialMeli.service.IPostService;
-import com.socialMeli.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,8 +23,8 @@ public class PostController {
 //    publicaciones más recientes primero).
 
     @GetMapping("/products/followed/{userId}/list")
-    public void obtainLastPublicationsByTheFollowedVendors(){
-
+    public ResponseEntity<PublicationDto> obtainLastPublicationsByTheFollowedVendors(@PathVariable(name = "userId") Integer userId){
+        return ResponseEntity.ok().body(postService.obtainLastPublicationsByTheFollowedVendors(userId));
     }
 
     // US 0005: Dar de alta una nueva publicación

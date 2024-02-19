@@ -1,19 +1,24 @@
 package com.socialMeli.dto.response;
 
-import com.socialMeli.dto.request.PostDTO;
-
+import com.socialMeli.entity.Product;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-public class PublicationDto {
+public class PostDto {
+    Integer id;
     Integer user_id;
-    List<PostDto> postDTOList;
+    LocalDate date;
+    Product product;
+    Integer category;
+    Double price;
 }

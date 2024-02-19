@@ -11,15 +11,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.time.LocalDateTime;
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Post {
-
     Integer id;
     LocalDate date;
-    Product product;
+    Integer productId;
     Integer category;
     Double price;
+    Integer userId;
 }
