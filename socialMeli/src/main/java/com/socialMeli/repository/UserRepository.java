@@ -1,6 +1,7 @@
 package com.socialMeli.repository;
 
 import com.socialMeli.entity.User;
+import com.socialMeli.exception.NotFoundException;
 import com.socialMeli.entity.UserType;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +18,16 @@ public class UserRepository implements IUserRepository{
     public Optional<User> findUserByUserId(Integer userId) {
         return userBd.stream().filter(user -> user.getId().equals(userId)).findFirst();
     }
+
+    @Override
+    public List<User> getAllFollowers(List<Integer> followersIds) {
+        return followersIds.stream()
+                .map(id -> findUserByUserId(id)
+                        .orElseThrow(() -> new NotFoundException("Seguidor con id " + id + " no encontrado")))
+                .toList();
+        //todo Hay forma de hacerlo con streams sin excepciones porque doy por hecho que existe el Id?
+    }
+
     public UserRepository() {
         this.userBd = new ArrayList<>(
                 List.of(
@@ -45,5 +56,4 @@ public class UserRepository implements IUserRepository{
             "Tomas Castro",
             "Victoria Acosta"
     };
-
 }
