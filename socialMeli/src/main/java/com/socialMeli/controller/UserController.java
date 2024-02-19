@@ -1,6 +1,7 @@
 package com.socialMeli.controller;
 import com.socialMeli.dto.response.VendorFollowerListDTO;
 
+import com.socialMeli.dto.response.FollowedListDto;
 import com.socialMeli.dto.response.UserUnfollowedDto;
 import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.service.IUserService;
@@ -29,6 +30,11 @@ public class UserController {
     @GetMapping("/users/{userId}/followers/count")
     public ResponseEntity<VendorFollowCountDto> getFollowerCount(@PathVariable Integer userId) {
         return ResponseEntity.ok().body(userService.getFollowerCount(userId));
+    }
+    @GetMapping("/users/{userId}/followed/list")
+    public ResponseEntity<FollowedListDto> getFollowedList(@PathVariable Integer userId) {
+        FollowedListDto followedListResponse = userService.getFollowedList(userId);
+        return ResponseEntity.ok().body(followedListResponse);
     }
 
     @PostMapping("/users/{userId}/follow/{userIdToFollow}")
