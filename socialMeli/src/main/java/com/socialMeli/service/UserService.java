@@ -8,6 +8,8 @@ import com.socialMeli.repository.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static com.socialMeli.entity.UserType.VENDOR;
 
 @Service
@@ -17,12 +19,12 @@ public class UserService implements IUserService {
 
     @Override
     public VendorFollowCountDto getFollowerCount(Integer userId) {
-        User user = userRepository
-                .findUserByUserId(userId)
+        User user = userRepository.findUserByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
         if (!VENDOR.equals(user.getType())) {
             throw new UserIsNotVendorException("El usuario no es un vendedor");
         }
+
         return new VendorFollowCountDto(user);
     }
 }
