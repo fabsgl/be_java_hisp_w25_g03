@@ -3,6 +3,7 @@ package com.socialMeli.repository;
 import com.socialMeli.entity.User;
 import com.socialMeli.exception.NotFoundException;
 import com.socialMeli.entity.UserType;
+import com.socialMeli.entity.UserType;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepository implements IUserRepository{
+public class UserRepository implements IUserRepository {
 
     List<User> userBd;
 
@@ -56,4 +57,26 @@ public class UserRepository implements IUserRepository{
             "Tomas Castro",
             "Victoria Acosta"
     };
+
+    @Override
+    public void unfollowUser(User user, User userToUnfollow) {
+        userBd.remove(user);
+        userBd.remove(userToUnfollow);
+        // Remove userToUnfollow from user's followed list
+        List<Integer> followedList = new ArrayList<>(user.getFollowedId());
+        followedList.remove(userToUnfollow.getId());
+        user.setFollowedId(followedList);
+
+        // Remove user from userToUnfollow's followers list
+        List<Integer> followerList = new ArrayList<>(userToUnfollow.getFollowersId());
+        followerList.remove(user.getId());
+        userToUnfollow.setFollowersId(followerList);
+
+        updateUser(user);
+        updateUser(userToUnfollow);
+    }
+
+    private void updateUser(User user) {
+        userBd.add(user);
+    }
 }

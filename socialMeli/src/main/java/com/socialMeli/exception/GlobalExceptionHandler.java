@@ -18,4 +18,9 @@ public class GlobalExceptionHandler {
         ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exceptionDto);
     }
+    @ExceptionHandler(UserFollowException.class)
+    public ResponseEntity<?> userFollowException(UserFollowException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
 }
