@@ -22,11 +22,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public List<User> getAllFollowers(List<Integer> followersIds) {
-        return followersIds.stream()
-                .map(id -> findUserByUserId(id)
-                        .orElseThrow(() -> new NotFoundException("Seguidor con id " + id + " no encontrado")))
-                .toList();
-        //todo Hay forma de hacerlo con streams sin excepciones porque doy por hecho que existe el Id?
+        return followersIds.stream().map(u -> findUserByUserId(u).get()).toList();
     }
 
     public UserRepository() {

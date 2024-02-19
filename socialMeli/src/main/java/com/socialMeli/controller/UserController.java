@@ -20,9 +20,8 @@ public class UserController {
     private final IUserService userService;
 
 
-    //US 0003: Obtener un listado de todos los usuarios que siguen a un determinado vendedor (¿Quién me sigue?)
     @GetMapping("/users/{userId}/followers/list")
-    public ResponseEntity<VendorFollowerListDTO> getFollowers(@PathVariable Integer userId) {
+    public ResponseEntity<VendorFollowerListDTO> getVendorFollowers(@PathVariable Integer userId) {
         return new ResponseEntity<>(userService.getVendorFollowers(userId), HttpStatus.OK);
     }
 
