@@ -12,7 +12,9 @@ import com.socialMeli.repository.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 
 import static com.socialMeli.entity.UserType.VENDOR;
@@ -38,14 +40,25 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public VendorFollowerListDTO getVendorFollowers(Integer userId) {
+    public VendorFollowerListDTO getVendorFollowers(Integer userId, String order) { //todo-----
         User userFound = getUserByIdOrThrow(userId, "Vendedor no encontrado");
         if (!VENDOR.equals(userFound.getType())) throw new UserIsNotVendorException("El usuario no es un vendedor");
-        List<UserVendorDTO> followersListDTO =
-                userRepository.getAllFollowers(userFound.getFollowersId())
-                        .stream()
-                        .map(UserVendorDTO::new)
-                        .toList();
+        List<UserVendorDTO> followersListDTO = userRepository.getAllFollowers(userFound.getFollowersId())
+                .stream()
+                .map(UserVendorDTO::new)
+                .toList();
+        if (order.equals("name_asc")) {
+            followersListDTO =
+                    followersListDTO.stream()
+                            .sorted(Comparator.comparing(UserVendorDTO::getUserName))
+                            .toList();
+        }else if (order.equals("name_desc")){
+            followersListDTO =
+                    followersListDTO.stream()
+                            .sorted(Comparator.comparing(UserVendorDTO::getUserName, Comparator.reverseOrder()))
+                            .toList();
+        }
+
         return new VendorFollowerListDTO(userId, userFound.getName(), followersListDTO);
     }
 

@@ -10,10 +10,7 @@ import org.springframework.http.HttpStatus;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -23,8 +20,9 @@ public class UserController {
 
 
     @GetMapping("/users/{userId}/followers/list")
-    public ResponseEntity<VendorFollowerListDTO> getVendorFollowers(@PathVariable Integer userId) {
-        return new ResponseEntity<>(userService.getVendorFollowers(userId), HttpStatus.OK);
+    public ResponseEntity<VendorFollowerListDTO> getVendorFollowers(@PathVariable Integer userId,
+                                                                    @RequestParam(required = false, defaultValue = "none") String order) {
+        return new ResponseEntity<>(userService.getVendorFollowers(userId, order), HttpStatus.OK);
     }
 
     @GetMapping("/users/{userId}/followers/count")
