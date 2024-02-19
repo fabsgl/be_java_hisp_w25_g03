@@ -12,8 +12,6 @@ import javax.swing.*;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@NoArgsConstructor
 public class MessageDTO {
     String message;
-
 }
