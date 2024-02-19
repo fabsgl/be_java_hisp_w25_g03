@@ -1,5 +1,7 @@
 package com.socialMeli.dto.response;
 
+import com.socialMeli.dto.request.PostDTO;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

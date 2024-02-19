@@ -1,7 +1,11 @@
 package com.socialMeli.service;
 
+import com.socialMeli.dto.response.FollowedListDto;
+import com.socialMeli.dto.response.VendorDto;
+import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.dto.response.*;
 import com.socialMeli.entity.User;
+import com.socialMeli.entity.UserType;
 import com.socialMeli.exception.NotFoundException;
 import com.socialMeli.exception.UserFollowException;
 import com.socialMeli.exception.UserIsNotVendorException;
@@ -10,6 +14,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.socialMeli.entity.UserType.VENDOR;
 
@@ -74,5 +81,21 @@ public class UserService implements IUserService {
         return userRepository
                 .findUserByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(errorMessage));
+    }
+
+    @Override
+    public FollowedListDto getFollowedList(Integer userId) {
+        User user = getUserByIdOrThrow(userId, "No se encontró al usuario");
+
+
+
+        List<VendorDto> followedVendors = user.getFollowedId().stream()
+                .map(id -> userRepository.findUserByUserId(id).get())
+                .filter(user1 -> VENDOR.equals(user1.getType()))
+                .map(u -> new VendorDto(u.getId(), u.getName()))
+                .toList();
+
+
+        return new FollowedListDto(userId, user.getName(), followedVendors);
     }
 }
