@@ -21,7 +21,6 @@ public class UserService implements IUserService {
     public VendorFollowCountDto getFollowerCount(Integer userId) {
         User user = userRepository.findUserByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
-
         if (!VENDOR.equals(user.getType())) {
             throw new UserIsNotVendorException("El usuario no es un vendedor");
         }

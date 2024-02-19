@@ -12,6 +12,7 @@ import java.util.Optional;
 public class UserRepository implements IUserRepository{
 
     List<User> userBd;
+
     @Override
     public Optional<User> findUserByUserId(Integer userId) {
         return userBd.stream().filter(user -> user.getId().equals(userId)).findFirst();

@@ -12,8 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-
-public class PostRepository implements IPostRepository{
+public class PostRepository implements IPostRepository {
     List<Product> productBd;
     List<Post> postBd;
 
