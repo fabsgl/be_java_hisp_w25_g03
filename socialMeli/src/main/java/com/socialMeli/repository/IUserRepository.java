@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface IUserRepository {
 
     Optional<User> findUserByUserId(Integer userId);
-
-    void unfollowUser(User user, User userToUnfollow);
     List<User> getAllFollowers(List<Integer> followersIds);
+    void unfollowUser(User user, User userToUnfollow);
+    void followUser(User user, User userToFollow);
 }

@@ -56,14 +56,11 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public void unfollowUser(User user, User userToUnfollow) {
-        userBd.remove(user);
-        userBd.remove(userToUnfollow);
-        // Remove userToUnfollow from user's followed list
+
         List<Integer> followedList = new ArrayList<>(user.getFollowedId());
         followedList.remove(userToUnfollow.getId());
         user.setFollowedId(followedList);
 
-        // Remove user from userToUnfollow's followers list
         List<Integer> followerList = new ArrayList<>(userToUnfollow.getFollowersId());
         followerList.remove(user.getId());
         userToUnfollow.setFollowersId(followerList);
@@ -72,7 +69,22 @@ public class UserRepository implements IUserRepository {
         updateUser(userToUnfollow);
     }
 
+    @Override
+    public void followUser(User user, User userToFollow) {
+        List<Integer> followedList = new ArrayList<>(user.getFollowedId());
+        followedList.add(userToFollow.getId());
+        user.setFollowedId(followedList);
+
+        List<Integer> followerList = new ArrayList<>(userToFollow.getFollowersId());
+        followerList.add(user.getId());
+        userToFollow.setFollowersId(followerList);
+
+        updateUser(user);
+        updateUser(userToFollow);
+    }
+
     private void updateUser(User user) {
+        userBd.remove(user);
         userBd.add(user);
     }
 }

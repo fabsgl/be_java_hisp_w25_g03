@@ -1,28 +1,39 @@
 package com.socialMeli.service;
 
-import com.socialMeli.dto.response.UserUnfollowedDto;
-import com.socialMeli.dto.response.UserVendorDTO;
-import com.socialMeli.dto.response.VendorFollowerListDTO;
-
-import com.socialMeli.dto.response.VendorFollowCountDto;
+import com.socialMeli.dto.response.*;
 import com.socialMeli.entity.User;
 import com.socialMeli.exception.NotFoundException;
-import com.socialMeli.exception.UserIsNotVendorException;
 import com.socialMeli.exception.UserFollowException;
+import com.socialMeli.exception.UserIsNotVendorException;
 import com.socialMeli.repository.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import java.util.Optional;
-
 import static com.socialMeli.entity.UserType.VENDOR;
 
 @Service
 @AllArgsConstructor
 public class UserService implements IUserService {
+
     private final IUserRepository userRepository;
+
+    @Override
+    public MessageDTO newFollow(Integer userId, Integer userIdToFollow) {
+
+        User user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
+        User userFollow = userRepository.findUserByUserId(userIdToFollow).orElseThrow(() -> new NotFoundException("No se encontro el usuario a seguir"));
+
+        boolean userIsMatch = user.getFollowersId().stream().noneMatch(id -> id.equals(userIdToFollow));
+
+        if (userIsMatch) {
+            userRepository.followUser(user, userFollow);
+            return new MessageDTO("Comenzaste a seguir al usuario " + userFollow.getName());
+        }
+
+        throw new UserFollowException("Ya sigues a este usuario");
+    }
 
     @Override
     public VendorFollowerListDTO getVendorFollowers(Integer userId) {
@@ -38,11 +49,10 @@ public class UserService implements IUserService {
 
 
     public VendorFollowCountDto getFollowerCount(Integer userId) {
-        User user = getUserByIdOrThrow(userId,"El usuario no fue encontrado");
+        User user = getUserByIdOrThrow(userId, "El usuario no fue encontrado");
         if (!VENDOR.equals(user.getType())) {
             throw new UserIsNotVendorException("El usuario no es un vendedor");
         }
-
         return new VendorFollowCountDto(user);
     }
 
