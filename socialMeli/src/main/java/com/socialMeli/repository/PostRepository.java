@@ -17,4 +17,9 @@ public class PostRepository implements IPostRepository{
         this.productBd = new ArrayList<>();
         this.postBd = new ArrayList<>();
     }
+
+    @Override
+    public void add(Post post) {
+        this.postBd.add(post);
+    }
 }

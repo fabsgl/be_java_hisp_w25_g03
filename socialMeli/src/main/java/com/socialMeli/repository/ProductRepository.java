@@ -15,4 +15,8 @@ public class ProductRepository implements IProductRepository{
     }
 
 
+    @Override
+    public void add(Product product) {
+        this.productList.add(product);
+    }
 }
