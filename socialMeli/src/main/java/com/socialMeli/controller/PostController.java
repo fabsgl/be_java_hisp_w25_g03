@@ -2,7 +2,6 @@ package com.socialMeli.controller;
 
 import com.socialMeli.dto.response.PublicationDto;
 import com.socialMeli.service.IPostService;
-import com.socialMeli.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

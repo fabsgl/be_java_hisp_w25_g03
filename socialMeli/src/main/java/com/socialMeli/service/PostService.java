@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostService implements IPostService {
     private final IPostRepository postRepository;
-    private final IProductRepository productRepository;
     private final IUserRepository userRepository;
 
     @Override
