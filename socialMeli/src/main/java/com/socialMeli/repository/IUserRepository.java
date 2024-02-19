@@ -4,8 +4,15 @@ import com.socialMeli.entity.User;
 
 import java.util.List;
 
-public interface IUserRepository {
-    User findUserByUserId(Integer userId);
+import java.util.List;
+import java.util.Optional;
 
-    List<Integer> findFollowedVendorsByUserId(Integer userId);
+
+public interface IUserRepository {
+
+
+    Optional<User> findUserByUserId(Integer userId);
+    List<User> getAllFollowers(List<Integer> followersIds);
+    void unfollowUser(User user, User userToUnfollow);
+    void followUser(User user, User userToFollow);
 }
