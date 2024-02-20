@@ -29,7 +29,7 @@ public class PostService implements IPostService {
     private static final AtomicInteger idCounter = new AtomicInteger(0);
 
     @Override
-    public PublicationDto obtainLastPublicationsByTheFollowedVendors(Integer userId) {
+    public PublicationDto obtainLastPublicationsByTheFollowedVendors(Integer userId, String order) {
         List<Integer> followedVendors = userRepository.findUserByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("No se encontro al usuario"))
                 .getFollowedId();
@@ -40,7 +40,7 @@ public class PostService implements IPostService {
             filteredPostOfOneUser.ifPresent(latestPost::addAll);
         }
         List<PostDto> sortedPost = addRecoverProductsOnPosts(latestPost);
-        return new PublicationDto(userId, sortPostsByDate(sortedPost));
+        return new PublicationDto(userId, sortPostsByDate(sortedPost, order));
     }
 
     public List<PostDto> addRecoverProductsOnPosts(List<Post> postList) {
@@ -85,10 +85,17 @@ public class PostService implements IPostService {
         }
     }
 
-    public List<PostDto> sortPostsByDate(List<PostDto> posts) {
-        return posts.stream()
-                .sorted(Comparator.comparing(PostDto::getDate).reversed())
-                .toList();
+    public List<PostDto> sortPostsByDate(List<PostDto> posts, String order) {
+        if (order.equalsIgnoreCase("date_asc")) {
+            return posts.stream()
+                    .sorted(Comparator.comparing(PostDto::getDate))
+                    .toList();
+        } else if (order.equalsIgnoreCase("date_desc")) {
+            return posts.stream()
+                    .sorted(Comparator.comparing(PostDto::getDate).reversed())
+                    .toList();
+        }
+        throw new InvalidDataException("Los datos de ordenamiento solicitados son incorrectos.");
     }
 
     public PostDto convertPostToDto(Post post) {
