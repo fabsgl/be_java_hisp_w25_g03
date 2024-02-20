@@ -89,13 +89,26 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public FollowedListDto getFollowedList(Integer userId) {
+    public FollowedListDto getFollowedList(Integer userId, String order) {
         User user = getUserByIdOrThrow(userId, "No se encontró al usuario");
         List<VendorDto> followedVendors = user.getFollowedId().stream()
                 .map(id -> userRepository.findUserByUserId(id).get())
                 .filter(user1 -> VENDOR.equals(user1.getType()))
                 .map(u -> new VendorDto(u.getId(), u.getName()))
                 .toList();
-        return new FollowedListDto(userId, user.getName(), followedVendors);
+        if (order == null) return new FollowedListDto(userId, user.getName(), followedVendors);
+        return new FollowedListDto( userId, user.getName(), sortFollowedListByName(followedVendors, order));
+    }
+    private List<VendorDto> sortFollowedListByName (List<VendorDto> vendorDtos, String order) {
+        if (order.equalsIgnoreCase("name_asc")) {
+            return vendorDtos.stream()
+                    .sorted(Comparator.comparing(VendorDto::getUserName))
+                    .toList();
+        } else if (order.equalsIgnoreCase("name_desc")) {
+            return vendorDtos.stream()
+                    .sorted(Comparator.comparing(VendorDto::getUserName).reversed())
+                    .toList();
+        }
+        throw new InvalidDataException("Los datos de ordenamiento solicitados son incorrectos.");
     }
 }
