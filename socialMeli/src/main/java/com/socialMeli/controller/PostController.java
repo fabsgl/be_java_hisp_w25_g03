@@ -20,7 +20,7 @@ public class PostController {
     @GetMapping("/products/followed/{userId}/list")
     public ResponseEntity<PublicationDto> obtainLastPublicationsByTheFollowedVendors(
                                                             @PathVariable Integer userId,
-                                                            @RequestParam String order) {
+                                                            @RequestParam(required = false) String order) {
         return ResponseEntity.ok().body(postService.obtainLastPublicationsByTheFollowedVendors(userId, order));
     }
 
