@@ -80,22 +80,29 @@ public class PostService implements IPostService {
         if (post.getPrice() <= 0) {
             throw new InvalidDataException("Error al enviar los datos: Precio no válido");
         }
-        if(productRepository.getProductById(post.getProduct().getId()).isEmpty()){
+        if (productRepository.getProductById(post.getProduct().getId()).isEmpty()) {
             productRepository.add(post.getProduct());
         }
     }
 
     public List<PostDto> sortPostsByDate(List<PostDto> posts, String order) {
-        if (order.equalsIgnoreCase("date_asc")) {
-            return posts.stream()
-                    .sorted(Comparator.comparing(PostDto::getDate))
-                    .toList();
-        } else if (order.equalsIgnoreCase("date_desc")) {
-            return posts.stream()
-                    .sorted(Comparator.comparing(PostDto::getDate).reversed())
-                    .toList();
+        List<PostDto> defaultSortedList = posts.stream()
+                .sorted(Comparator.comparing(PostDto::getDate).reversed())
+                .toList();
+        if (order != null) {
+            switch (order) {
+                case "date_asc" -> {
+                    return posts.stream()
+                            .sorted(Comparator.comparing(PostDto::getDate))
+                            .toList();
+                }
+                case "date_desc" -> {
+                    return defaultSortedList;
+                }
+                default -> throw new InvalidDataException("Los datos de ordenamiento solicitados son incorrectos.");
+            }
         }
-        throw new InvalidDataException("Los datos de ordenamiento solicitados son incorrectos.");
+        return defaultSortedList;
     }
 
     public PostDto convertPostToDto(Post post) {
