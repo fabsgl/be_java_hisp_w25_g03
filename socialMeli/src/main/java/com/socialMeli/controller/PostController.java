@@ -1,6 +1,7 @@
 package com.socialMeli.controller;
 
 import com.socialMeli.dto.request.PostDTO;
+import com.socialMeli.dto.response.MessageDTO;
 import com.socialMeli.dto.response.PublicationDto;
 import com.socialMeli.service.IPostService;
 import lombok.AllArgsConstructor;
@@ -26,9 +27,9 @@ public class PostController {
     }
 
     @PostMapping("/products/post")
-    public ResponseEntity<?> addNewPost(@RequestBody PostDTO postDto){
+    public ResponseEntity<MessageDTO> addNewPost(@RequestBody PostDTO postDto){
         postService.addPost(postDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(new MessageDTO("Post creado con éxito"), HttpStatus.OK);
     }
 
 }
