@@ -5,6 +5,7 @@ import com.socialMeli.dto.response.VendorDto;
 import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.dto.response.*;
 import com.socialMeli.entity.User;
+import com.socialMeli.exception.InvalidDataException;
 import com.socialMeli.exception.NotFoundException;
 import com.socialMeli.exception.UserFollowException;
 import com.socialMeli.exception.UserIsNotVendorException;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 
 import static com.socialMeli.entity.UserType.VENDOR;
@@ -40,25 +40,27 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public VendorFollowerListDTO getVendorFollowers(Integer userId, String order) { //todo-----
+    public VendorFollowerListDTO getVendorFollowers(Integer userId, String order) {
         User userFound = getUserByIdOrThrow(userId, "Vendedor no encontrado");
         if (!VENDOR.equals(userFound.getType())) throw new UserIsNotVendorException("El usuario no es un vendedor");
+
         List<UserVendorDTO> followersListDTO = userRepository.getAllFollowers(userFound.getFollowersId())
                 .stream()
                 .map(UserVendorDTO::new)
                 .toList();
-        if (order.equals("name_asc")) {
+        if ("name_asc".equals(order)) {
             followersListDTO =
                     followersListDTO.stream()
                             .sorted(Comparator.comparing(UserVendorDTO::getUserName))
                             .toList();
-        }else if (order.equals("name_desc")){
+        }else if ("name_desc".equals(order)){
             followersListDTO =
                     followersListDTO.stream()
                             .sorted(Comparator.comparing(UserVendorDTO::getUserName, Comparator.reverseOrder()))
                             .toList();
+        }else if (order!=null){
+            throw new InvalidDataException("Se envió un dato de ordenamiento inválido");
         }
-
         return new VendorFollowerListDTO(userId, userFound.getName(), followersListDTO);
     }
 
