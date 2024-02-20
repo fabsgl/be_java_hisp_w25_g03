@@ -1,6 +1,7 @@
 package com.socialMeli.controller;
 
 import com.socialMeli.dto.request.PostDTO;
+import com.socialMeli.dto.request.PostDescDTO;
 import com.socialMeli.dto.response.MessageDTO;
 import com.socialMeli.dto.response.PublicationDto;
 import com.socialMeli.service.IPostService;
@@ -29,5 +30,17 @@ public class PostController {
         postService.addPost(postDto);
         return new ResponseEntity<>(new MessageDTO("Post creado con éxito"), HttpStatus.OK);
     }
+    // US 0010: Da de alta una nueva publicacion/producto con descuento ddiazrodas
+    @PostMapping("/products/promo-post")
+    public ResponseEntity<?> addNewPromotionPost(@RequestBody PostDescDTO postDescDTO) {
+        postService.addPromoPost(postDescDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    //US 0011: trae el listado de los productos en promo de un determinado vendedor
+    @GetMapping("/products/promo-post/list?user_id={userId}")
+    public ResponseEntity<?> getPromoPostsByVendor(@RequestParam("user_id") String userId) {
+        return ResponseEntity.ok().body(postService.getPromorionPostsById(userId));
+    }
+
 
 }

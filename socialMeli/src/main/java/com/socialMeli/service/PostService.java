@@ -1,10 +1,13 @@
 package com.socialMeli.service;
 
 import com.socialMeli.dto.request.PostDTO;
-import com.socialMeli.dto.response.PostDto;
+import com.socialMeli.dto.request.PostDescDTO;
 import com.socialMeli.dto.response.PublicationDto;
+import com.socialMeli.dto.response.QTYofDiscountProdByVendorIdDto;
 import com.socialMeli.entity.Post;
+import com.socialMeli.entity.PostDesc;
 import com.socialMeli.exception.InvalidDataException;
+import com.socialMeli.dto.response.PostDto;
 import com.socialMeli.exception.NotFoundException;
 import com.socialMeli.repository.IPostRepository;
 import com.socialMeli.repository.IProductRepository;
@@ -58,6 +61,19 @@ public class PostService implements IPostService {
         validatePost(postDto);
         Post finalPost = new Post(idCounter.incrementAndGet(), postDto);
         postRepository.add(finalPost);
+    }
+
+    @Override
+    public void addPromoPost(PostDescDTO postDescDto) {
+        validatePost(postDescDto);
+        PostDesc finalPostDesc = new PostDesc(postDescDto.getHas_promo(), postDescDto.getDiscount());
+        productRepository.add(postDescDto.getProduct());
+        postRepository.add(finalPostDesc);
+    }
+
+    @Override
+    public QTYofDiscountProdByVendorIdDto getPromorionPostsById(String userId) {
+        return null;
     }
 
     private void validatePost(PostDTO post) {
