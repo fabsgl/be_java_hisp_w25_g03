@@ -21,11 +21,13 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(UserFollowException.class)
     public ResponseEntity<?> userFollowException(UserFollowException e){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exceptionDto);
     }
     @ExceptionHandler(InvalidDataException.class)
-    public ResponseEntity<MessageDTO> invalidDataException(InvalidDataException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageDTO(e.getMessage()));
+    public ResponseEntity<?> invalidDataException(InvalidDataException e){
+        ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDto);
     }
 
 }
