@@ -28,7 +28,7 @@ public class UserService implements IUserService {
     @Override
     public MessageDTO newFollow(Integer userId, Integer userIdToFollow) {
         User user = getUserByIdOrThrow(userId, "No se encontro al usuario");
-        User userFollow = getUserByIdOrThrow(userIdToFollow, "No se encontro el usuario a seguir");
+        User userFollow = getUserByIdOrThrow(userIdToFollow, "No se encontro el vendedor a seguir");
         if (!VENDOR.equals(userFollow.getType()))
             throw new UserIsNotVendorException("El usuario " + userFollow.getName() + " a seguir no es un vendedor");
         boolean userIsMatch = user.getFollowedId().contains(userIdToFollow);  //stream().noneMatch(id -> id.equals(userIdToFollow));
@@ -92,7 +92,7 @@ public class UserService implements IUserService {
     public FollowedListDto getFollowedList(Integer userId, String order) {
         User user = getUserByIdOrThrow(userId, "No se encontró al usuario");
         List<VendorDto> followedVendors = user.getFollowedId().stream()
-                .map(id -> userRepository.findUserByUserId(id).get())
+                .map(id -> userRepository.findUserByUserId(id).orElseThrow(() -> new NotFoundException("No se encontró al seguido")))
                 .filter(user1 -> VENDOR.equals(user1.getType()))
                 .map(u -> new VendorDto(u.getId(), u.getName()))
                 .toList();
