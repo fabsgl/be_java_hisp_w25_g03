@@ -8,7 +8,6 @@ import com.socialMeli.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +19,9 @@ public class UserController {
 
 
     @GetMapping("/users/{userId}/followers/list")
-    public ResponseEntity<VendorFollowerListDTO> getVendorFollowers(@PathVariable Integer userId) {
-        return new ResponseEntity<>(userService.getVendorFollowers(userId), HttpStatus.OK);
+    public ResponseEntity<VendorFollowerListDTO> getVendorFollowers(@PathVariable Integer userId,
+                                                                    @RequestParam(required = false) String order) {
+        return new ResponseEntity<>(userService.getVendorFollowers(userId, order), HttpStatus.OK);
     }
 
     @GetMapping("/users/{userId}/followers/count")

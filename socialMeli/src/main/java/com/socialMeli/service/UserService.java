@@ -40,14 +40,27 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public VendorFollowerListDTO getVendorFollowers(Integer userId) {
+    public VendorFollowerListDTO getVendorFollowers(Integer userId, String order) {
         User userFound = getUserByIdOrThrow(userId, "Vendedor no encontrado");
         if (!VENDOR.equals(userFound.getType())) throw new UserIsNotVendorException("El usuario no es un vendedor");
-        List<UserVendorDTO> followersListDTO =
-                userRepository.getAllFollowers(userFound.getFollowersId())
-                        .stream()
-                        .map(UserVendorDTO::new)
-                        .toList();
+
+        List<UserVendorDTO> followersListDTO = userRepository.getAllFollowers(userFound.getFollowersId())
+                .stream()
+                .map(UserVendorDTO::new)
+                .toList();
+        if ("name_asc".equals(order)) {
+            followersListDTO =
+                    followersListDTO.stream()
+                            .sorted(Comparator.comparing(UserVendorDTO::getUserName))
+                            .toList();
+        }else if ("name_desc".equals(order)){
+            followersListDTO =
+                    followersListDTO.stream()
+                            .sorted(Comparator.comparing(UserVendorDTO::getUserName, Comparator.reverseOrder()))
+                            .toList();
+        }else if (order!=null){
+            throw new InvalidDataException("Se envió un dato de ordenamiento inválido");
+        }
         return new VendorFollowerListDTO(userId, userFound.getName(), followersListDTO);
     }
 
