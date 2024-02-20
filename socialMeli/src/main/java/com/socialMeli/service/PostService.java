@@ -12,12 +12,13 @@ import com.socialMeli.repository.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+
 
 @Service
 @AllArgsConstructor
@@ -55,18 +56,17 @@ public class PostService implements IPostService {
     @Override
     public void addPost(PostDTO postDto) {
         validatePost(postDto);
-        //TODO add constructor with object instead of data passing
-        Post finalPost = new Post(idCounter.incrementAndGet(), postDto.getDate(), postDto.getProduct().getId(), postDto.getCategory(), postDto.getPrice(), postDto.getUser_id());
-        productRepository.add(postDto.getProduct());
+        Post finalPost = new Post(idCounter.incrementAndGet(), postDto);
         postRepository.add(finalPost);
     }
 
     private void validatePost(PostDTO post) {
-        if (post.getUser_id() <= 0) {
-            throw new InvalidDataException("Error al enviar los datos: Usuario no valido");
+        if (post.getUserId() <= 0) {
+            throw new InvalidDataException("Error al enviar los datos: Usuario no válido");
         }
-        if (post.getDate() == null) {//Preguntar
-            throw new InvalidDataException("Error al enviar los datos: La fecha no puede ser nula");
+        userRepository.findUserByUserId(post.getUserId()).orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
+        if (post.getDate() == null) {
+            post.setDate(LocalDate.now());
         }
         if (post.getProduct() == null
                 || post.getProduct().getId() <= 0
@@ -79,6 +79,9 @@ public class PostService implements IPostService {
         }
         if (post.getPrice() <= 0) {
             throw new InvalidDataException("Error al enviar los datos: Precio no válido");
+        }
+        if(productRepository.getProductById(post.getProduct().getId()).isEmpty()){
+            productRepository.add(post.getProduct());
         }
     }
 
