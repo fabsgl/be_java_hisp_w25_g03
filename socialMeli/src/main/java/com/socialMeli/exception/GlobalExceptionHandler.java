@@ -1,6 +1,7 @@
 package com.socialMeli.exception;
 
 import com.socialMeli.dto.response.ExceptionDto;
+import com.socialMeli.dto.response.MessageDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,8 +24,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
     @ExceptionHandler(InvalidDataException.class)
-    public ResponseEntity<?> invalidDataException(InvalidDataException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    public ResponseEntity<MessageDTO> invalidDataException(InvalidDataException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageDTO(e.getMessage()));
     }
 
 }
