@@ -16,5 +16,6 @@ public class VendorFollowerListDTO {
     Integer userId;
     @JsonProperty("user_name")
     String userName;
+    @JsonProperty("followers")
     List<UserVendorDTO> followers;
 }
