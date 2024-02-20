@@ -8,12 +8,8 @@ import com.socialMeli.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -23,8 +19,9 @@ public class UserController {
 
 
     @GetMapping("/users/{userId}/followers/list")
-    public ResponseEntity<VendorFollowerListDTO> getVendorFollowers(@PathVariable Integer userId) {
-        return new ResponseEntity<>(userService.getVendorFollowers(userId), HttpStatus.OK);
+    public ResponseEntity<VendorFollowerListDTO> getVendorFollowers(@PathVariable Integer userId,
+                                                                    @RequestParam(required = false) String order) {
+        return new ResponseEntity<>(userService.getVendorFollowers(userId, order), HttpStatus.OK);
     }
 
     @GetMapping("/users/{userId}/followers/count")
@@ -32,9 +29,8 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getFollowerCount(userId));
     }
     @GetMapping("/users/{userId}/followed/list")
-    public ResponseEntity<FollowedListDto> getFollowedList(@PathVariable Integer userId) {
-        FollowedListDto followedListResponse = userService.getFollowedList(userId);
-        return ResponseEntity.ok().body(followedListResponse);
+    public ResponseEntity<FollowedListDto> getFollowedList(@PathVariable Integer userId , @RequestParam(required = false) String order)  {
+        return ResponseEntity.ok().body(userService.getFollowedList(userId, order));
     }
 
     @PostMapping("/users/{userId}/follow/{userIdToFollow}")
