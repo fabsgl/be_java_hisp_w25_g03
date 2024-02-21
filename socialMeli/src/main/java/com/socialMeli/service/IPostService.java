@@ -12,5 +12,4 @@ public interface IPostService {
     PublicationDto obtainLastPublicationsByTheFollowedVendors(Integer userId, String order);
     void addPost(PostDTO post);
     void addPromoPost(PostDescDTO post);
-    QTYofDiscountProdByVendorIdDto getPromorionPostsById(String userId);
 }

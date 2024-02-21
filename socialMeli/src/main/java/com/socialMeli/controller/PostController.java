@@ -37,10 +37,10 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     //US 0011: trae el listado de los productos en promo de un determinado vendedor
-    @GetMapping("/products/promo-post/list?user_id={userId}")
-    public ResponseEntity<?> getPromoPostsByVendor(@RequestParam("user_id") String userId) {
-        return ResponseEntity.ok().body(postService.getPromorionPostsById(userId));
-    }
+//    @GetMapping("/products/promo-post/list?user_id={userId}")
+//    public ResponseEntity<?> getPromoPostsByVendor(@RequestParam("user_id") String userId) {
+//        return ResponseEntity.ok().body(postService.getPromotionPostsById(userId));
+//    }
 
 
 }

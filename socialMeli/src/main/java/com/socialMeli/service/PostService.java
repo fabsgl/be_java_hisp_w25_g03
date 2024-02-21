@@ -66,16 +66,10 @@ public class PostService implements IPostService {
     @Override
     public void addPromoPost(PostDescDTO postDescDto) {
         validatePost(postDescDto);
-        PostDesc finalPostDesc = new PostDesc(postDescDto.getHas_promo(), postDescDto.getDiscount());
+        PostDesc finalPostDesc = new PostDesc(idCounter.incrementAndGet(), postDescDto);
         productRepository.add(postDescDto.getProduct());
         postRepository.add(finalPostDesc);
     }
-
-    @Override
-    public QTYofDiscountProdByVendorIdDto getPromorionPostsById(String userId) {
-        return null;
-    }
-
     private void validatePost(PostDTO post) {
         if (post.getUserId() <= 0) {
             throw new InvalidDataException("Error al enviar los datos: Usuario no válido");
