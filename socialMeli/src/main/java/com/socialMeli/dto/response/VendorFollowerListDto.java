@@ -11,11 +11,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VendorFollowerListDTO {
+public class VendorFollowerListDto {
     @JsonProperty("user_id")
     Integer userId;
     @JsonProperty("user_name")
     String userName;
     @JsonProperty("followers")
-    List<UserVendorDTO> followers;
+    List<UserVendorDto> followers;
 }

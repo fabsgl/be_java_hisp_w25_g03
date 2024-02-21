@@ -2,16 +2,14 @@ package com.socialMeli.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialMeli.entity.User;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
-public class PromotedVendorDto extends UserVendorDTO{
+public class PromotedVendorDto extends UserVendorDto{
     @JsonProperty("promo_products_count")
     Integer promoProductsCount;
 

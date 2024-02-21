@@ -2,15 +2,14 @@ package com.socialMeli.repository;
 
 import com.socialMeli.entity.Post;
 import com.socialMeli.entity.Product;
+import com.socialMeli.entity.PromotionalPost;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class PostRepository implements IPostRepository {
@@ -42,7 +41,7 @@ public class PostRepository implements IPostRepository {
     public Optional<List<Post>> getPromotedPostByUserId(Integer userId) {
         List<Post> filteredPost = postBd.stream().filter(
                 post -> post.getUserId().equals(userId) &&
-                        post.getHas_promo()
+                        post instanceof PromotionalPost
         ).toList();
         return filteredPost.isEmpty() ? Optional.empty() : Optional.of(filteredPost);
     }

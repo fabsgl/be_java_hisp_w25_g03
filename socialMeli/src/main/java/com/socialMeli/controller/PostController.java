@@ -1,6 +1,8 @@
 package com.socialMeli.controller;
 
 import com.socialMeli.dto.request.PostDTO;
+import com.socialMeli.dto.request.PromotionalPostDTO;
+import com.socialMeli.dto.response.PublicationDto;
 import com.socialMeli.dto.response.*;
 import com.socialMeli.service.IPostService;
 import lombok.AllArgsConstructor;
@@ -14,15 +16,15 @@ public class PostController {
 
     private final IPostService postService;
 
-
     @GetMapping("/products/followed/{userId}/list")
     public ResponseEntity<PublicationDto> obtainLastPublicationsByTheFollowedVendors(
                                                             @PathVariable Integer userId,
                                                             @RequestParam(required = false) String order) {
-        return ResponseEntity.ok().body(postService.obtainLastPublicationsByTheFollowedVendors(userId, order));
+        return ResponseEntity.ok().body(postService
+                .obtainLastPublicationsByTheFollowedVendors(userId, order));
     }
 
-    //Obtener la cantidad de productos en promoción de un determinado vendedor
+
     @GetMapping("/products/promo-post/count")
     public ResponseEntity<PromotedVendorDto> obtainTheQuantityOfPromotedPostForOneVendor(
                                                             @RequestParam Integer user_id) {
@@ -30,15 +32,15 @@ public class PostController {
     }
 
     @PostMapping("/products/promo-post")
-    public ResponseEntity<MessageDTO> addNewPromotionalPost(@RequestBody PostDTO postDto){
+    public ResponseEntity<MessageDto> addNewPromotionalPost(@RequestBody PromotionalPostDTO postDto){
         postService.addPost(postDto);
-        return new ResponseEntity<>(new MessageDTO("Post creado con éxito"), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageDto("Post creado con éxito"), HttpStatus.OK);
     }
 
     @PostMapping("/products/post")
-    public ResponseEntity<MessageDTO> addNewPost(@RequestBody PostDTO postDto){
+    public ResponseEntity<MessageDto> addNewPost(@RequestBody PostDTO postDto){
         postService.addPost(postDto);
-        return new ResponseEntity<>(new MessageDTO("Post creado con éxito"), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageDto("Post creado con éxito"), HttpStatus.OK);
     }
 
 }

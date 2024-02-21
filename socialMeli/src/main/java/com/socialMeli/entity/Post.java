@@ -22,8 +22,6 @@ public class Post {
     Integer category;
     Double price;
     Integer userId;
-    Boolean has_promo;
-    Double discount;
 
     public Post(Integer id, PostDTO postDto) {
         this.id = id;
@@ -32,7 +30,5 @@ public class Post {
         this.category = postDto.getCategory();
         this.price = postDto.getPrice();
         this.userId = postDto.getUserId();
-        this.has_promo = postDto.getHasPromo() != null;
-        this.discount = postDto.getDiscount() != null ? postDto.getDiscount(): 0D;
     }
 }

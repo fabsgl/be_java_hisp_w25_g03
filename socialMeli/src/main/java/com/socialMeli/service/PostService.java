@@ -1,11 +1,13 @@
 package com.socialMeli.service;
 
 import com.socialMeli.dto.request.PostDTO;
+import com.socialMeli.dto.request.PromotionalPostDTO;
 import com.socialMeli.dto.response.PostDto;
+import com.socialMeli.dto.response.ProductDto;
 import com.socialMeli.dto.response.PromotedVendorDto;
 import com.socialMeli.dto.response.PromotionalPostDto;
 import com.socialMeli.dto.response.PublicationDto;
-import com.socialMeli.entity.Post;
+import com.socialMeli.entity.*;
 import com.socialMeli.entity.User;
 import com.socialMeli.exception.InvalidDataException;
 import com.socialMeli.exception.NotFoundException;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.socialMeli.entity.UserType.VENDOR;
+
 
 @Service
 @AllArgsConstructor
@@ -30,6 +34,23 @@ public class PostService implements IPostService {
     private final IUserRepository userRepository;
     private final IProductRepository productRepository;
     private static final AtomicInteger idCounter = new AtomicInteger(0);
+
+    @Override
+    public void addPost(PostDTO postDto) {
+        validatePost(postDto);
+
+        Post finalPost;
+
+        if (postDto instanceof PromotionalPostDTO) {
+            finalPost = new PromotionalPost(idCounter.incrementAndGet(), postDto);
+        } else {
+            finalPost = new Post(idCounter.incrementAndGet(), postDto);
+        }
+        if (productRepository.getProductById(postDto.getProduct().getId()).isEmpty()) {
+            productRepository.add(convertProductDtoToEntity(postDto.getProduct()));
+        }
+        postRepository.add(finalPost);
+    }
 
     @Override
     public PublicationDto obtainLastPublicationsByTheFollowedVendors(Integer userId, String order) {
@@ -42,49 +63,48 @@ public class PostService implements IPostService {
             Optional<List<Post>> filteredPostOfOneUser = postRepository.getPostFromTheLastTwoWeeksByUserId(vendorId);
             filteredPostOfOneUser.ifPresent(latestPost::addAll);
         }
-        List<PostDto> sortedPost = addRecoverProductsOnPosts(latestPost);
-        return new PublicationDto(userId, sortPostsByDate(sortedPost, order));
+        return new PublicationDto(userId, sortPostsByDate(addRecoverProductsDtoOnPosts(latestPost), order));
     }
 
-    public List<PostDto> addRecoverProductsOnPosts(List<Post> postList) {
-
+    private List<PostDto> addRecoverProductsDtoOnPosts(List<Post> postList) {
         List<PostDto> postDtoList = new ArrayList<>();
         for (Post post : postList) {
             PostDto postDto = convertPostToDto(post);
-            postDto.setProduct(productRepository.getProductById(post.getProductId()).orElseThrow(() -> new NotFoundException("No se encontro el producto")));
+            postDto.setProduct(
+                    convertProductToDto(
+                            productRepository.getProductById(post.getProductId())
+                                    .orElseThrow(() -> new NotFoundException("No se encontro el producto")))
+            );
             postDtoList.add(postDto);
         }
         return postDtoList;
     }
 
-    @Override
-    public void addPost(PostDTO postDto) {
-        validatePost(postDto);
-        Post finalPost = new Post(idCounter.incrementAndGet(), postDto);
-        postRepository.add(finalPost);
-    }
 
     @Override
     public PromotedVendorDto obtainTheQuantityOfPromotedPostForOneVendor(Integer userId) {
         User user = userRepository.findUserByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
-        List<PostDto> sortedPost = addRecoverProductsOnPosts(postRepository.getPromotedPostByUserId(userId).orElseThrow(
+        List<PostDto> sortedPost = addRecoverProductsDtoOnPosts(postRepository.getPromotedPostByUserId(userId).orElseThrow(
                 () -> new NotFoundException("El usuario no tiene publiaciones promocionadas.")
         ));
-        return new PromotedVendorDto(userId,user.getName(),sortedPost.size());
+        return new PromotedVendorDto(userId, user.getName(), sortedPost.size());
     }
 
     private void validatePost(PostDTO post) {
         if (post.getUserId() <= 0) {
             throw new InvalidDataException("Error al enviar los datos: Usuario no válido");
         }
-        userRepository.findUserByUserId(post.getUserId()).orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
+        User user = userRepository.findUserByUserId(post.getUserId()).orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
+        if (!VENDOR.equals(user.getType())) {
+            throw new InvalidDataException("El usuario " + user.getName() + " no es un vendedor");
+        }
         if (post.getDate() == null) {
             post.setDate(LocalDate.now());
         }
         if (post.getProduct() == null
-                || post.getProduct().getId() <= 0
                 || post.getProduct().getName() == null
+                || post.getProduct().getId() <= 0
                 || post.getProduct().getName().isEmpty()) {
             throw new InvalidDataException("Error al enviar los datos: Producto no válido");
         }
@@ -94,12 +114,9 @@ public class PostService implements IPostService {
         if (post.getPrice() <= 0) {
             throw new InvalidDataException("Error al enviar los datos: Precio no válido");
         }
-        if (productRepository.getProductById(post.getProduct().getId()).isEmpty()) {
-            productRepository.add(post.getProduct());
-        }
     }
 
-    public List<PostDto> sortPostsByDate(List<PostDto> posts, String order) {
+    private List<PostDto> sortPostsByDate(List<PostDto> posts, String order) {
         List<PostDto> defaultSortedList = posts.stream()
                 .sorted(Comparator.comparing(PostDto::getDate).reversed())
                 .toList();
@@ -119,32 +136,44 @@ public class PostService implements IPostService {
         return defaultSortedList;
     }
 
-    public PostDto convertPostToDto(Post post) {
-        if(post.getHas_promo()){
-            PromotionalPostDto convertedPost = new PromotionalPostDto();
-            convertedPost.setUserId(post.getUserId());
-            convertedPost.setId(post.getId());
-            convertedPost.setProduct(productRepository
-                    .getProductById(post.getProductId())
-                    .orElseThrow(() -> new NotFoundException("El producto buscado no existe.")));
-            convertedPost.setDate(post.getDate());
-            convertedPost.setPrice(post.getPrice());
-            convertedPost.setCategory(post.getCategory());
-            convertedPost.setDiscount(post.getDiscount());
-            convertedPost.setHasPromo(post.getHas_promo());
-
-            return convertedPost;
-        } else{
-            PostDto convertedPost = new PostDto();
-            convertedPost.setUserId(post.getUserId());
-            convertedPost.setId(post.getId());
-            convertedPost.setProduct(productRepository
-                    .getProductById(post.getProductId())
-                    .orElseThrow(() -> new NotFoundException("El producto buscado no existe.")));
-            convertedPost.setDate(post.getDate());
-            convertedPost.setPrice(post.getPrice());
-            convertedPost.setCategory(post.getCategory());
-            return convertedPost;
+    private PostDto convertPostToDto(Post post) {
+        PostDto finalPost;
+        if (post instanceof PromotionalPost) {
+            finalPost = new PromotionalPostDto(post.getId(), post.getUserId(), post.getDate(),
+                    convertProductToDto(
+                            productRepository.getProductById(
+                                    post.getProductId()).orElseThrow(() -> new NotFoundException("El producto no fue encontrado"))),
+                    post.getCategory(), post.getPrice(),
+                    ((PromotionalPost) post).getHasPromo(), ((PromotionalPost) post).getDiscount());
+        } else {
+            finalPost = new PostDto(post.getId(), post.getUserId(), post.getDate(),
+                    convertProductToDto(
+                            productRepository.getProductById(
+                                    post.getProductId()).orElseThrow(() -> new NotFoundException("El producto no fue encontrado")))
+                    , post.getCategory(), post.getPrice());
         }
+        return finalPost;
+    }
+
+    private ProductDto convertProductToDto(Product product) {
+        return new ProductDto(
+                product.getId(),
+                product.getName(),
+                product.getType(),
+                product.getBrand(),
+                product.getColor(),
+                product.getNote()
+        );
+    }
+
+    private Product convertProductDtoToEntity(ProductDto product) {
+        return new Product(
+                product.getId(),
+                product.getName(),
+                product.getType(),
+                product.getBrand(),
+                product.getColor(),
+                product.getNote()
+        );
     }
 }
