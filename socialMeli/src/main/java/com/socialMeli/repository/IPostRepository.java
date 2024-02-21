@@ -10,5 +10,6 @@ import com.socialMeli.entity.Product;
 
 public interface IPostRepository {
     Optional<List<Post>> getPostFromTheLastTwoWeeksByUserId(Integer userId);
+    Optional<List<Post>> getPromotedPostByUserId(Integer userId);
     Integer add(Post post);
 }

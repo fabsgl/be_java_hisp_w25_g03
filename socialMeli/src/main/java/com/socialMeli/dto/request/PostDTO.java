@@ -23,6 +23,7 @@ public class PostDTO {
     Product product;
     Integer category;
     Double price;
-
-
+    @JsonProperty("has_promo")
+    Boolean hasPromo;
+    Double discount;
 }

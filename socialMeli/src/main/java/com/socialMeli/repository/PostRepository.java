@@ -37,4 +37,13 @@ public class PostRepository implements IPostRepository {
         ).toList();
         return filteredPost.isEmpty() ? Optional.empty() : Optional.of(filteredPost);
     }
+
+    @Override
+    public Optional<List<Post>> getPromotedPostByUserId(Integer userId) {
+        List<Post> filteredPost = postBd.stream().filter(
+                post -> post.getUserId().equals(userId) &&
+                        post.getHas_promo()
+        ).toList();
+        return filteredPost.isEmpty() ? Optional.empty() : Optional.of(filteredPost);
+    }
 }
