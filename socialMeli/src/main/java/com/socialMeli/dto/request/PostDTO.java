@@ -2,6 +2,7 @@ package com.socialMeli.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.socialMeli.dto.response.ProductDto;
 import com.socialMeli.entity.Product;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,9 +21,12 @@ public class PostDTO {
     Integer userId;
     @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate date;
-    Product product;
+    ProductDto product;
     Integer category;
     Double price;
+    @JsonProperty("has_promo")
+    Boolean hasPromo;
+    Double discount;
 
 
 }

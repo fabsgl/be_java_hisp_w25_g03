@@ -1,6 +1,7 @@
 package com.socialMeli.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.socialMeli.dto.response.ProductDto;
 import com.socialMeli.entity.Product;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,9 +13,18 @@ import java.time.LocalDate;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
-@NoArgsConstructor
 public class PostDescDTO extends PostDTO {
-    Boolean has_promo;
+    Boolean hasPromo;
     Double discount;
+
+//    public PostDescDTO(Integer id, PostDTO postDTO) {
+//        super(id ,postDTO.getDate(), postDTO.getProduct().getId(), postDTO.getCategory(), postDTO.getPrice(),postDTO.getUserId());
+//        this.hasPromo = postDTO.getHasPromo();
+//        this.discount = postDTO.getDiscount();
+//    }
+//
+//    public PostDescDTO(Boolean has_promo, Double discount) {
+//        this.hasPromo = has_promo;
+//        this.discount = discount;
+//    }
 }

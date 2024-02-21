@@ -25,7 +25,7 @@ public class PostRepository implements IPostRepository {
     @Override
     public Integer add(Post post) {
         this.postBd.add(post);
-        System.out.println(postBd);
+        System.out.println(post.getProductId());
         return post.getId();
     }
     Period twoWeeksPeriod = Period.ofWeeks(2);

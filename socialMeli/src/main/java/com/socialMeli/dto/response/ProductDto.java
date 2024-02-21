@@ -4,17 +4,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
 @Data
-@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VendorFollowerListDTO {
-    @JsonProperty("user_id")
-    Integer userId;
-    @JsonProperty("user_name")
-    String userName;
-    List<UserVendorDTO> followers;
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductDto {
+    @JsonProperty("product_id")
+    Integer id;
+    @JsonProperty("product_name")
+    String name;
+    String type;
+    String brand;
+    String color;
+    String notes;
 }
