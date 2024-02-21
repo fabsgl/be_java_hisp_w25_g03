@@ -26,7 +26,7 @@ public class UserService implements IUserService {
     private final IUserRepository userRepository;
 
     @Override
-    public MessageDTO newFollow(Integer userId, Integer userIdToFollow) {
+    public MessageDto newFollow(Integer userId, Integer userIdToFollow) {
         User user = getUserByIdOrThrow(userId, "No se encontro al usuario");
         User userFollow = getUserByIdOrThrow(userIdToFollow, "No se encontro el vendedor a seguir");
         if (!VENDOR.equals(userFollow.getType()))
@@ -34,34 +34,34 @@ public class UserService implements IUserService {
         boolean userIsMatch = user.getFollowedId().contains(userIdToFollow);  //stream().noneMatch(id -> id.equals(userIdToFollow));
         if (!userIsMatch) {
             userRepository.followUser(user, userFollow);
-            return new MessageDTO("Comenzaste a seguir al usuario " + userFollow.getName());
+            return new MessageDto("Comenzaste a seguir al usuario " + userFollow.getName());
         }
         throw new UserFollowException("Ya sigues a este usuario");
     }
 
     @Override
-    public VendorFollowerListDTO getVendorFollowers(Integer userId, String order) {
+    public VendorFollowerListDto getVendorFollowers(Integer userId, String order) {
         User userFound = getUserByIdOrThrow(userId, "Vendedor no encontrado");
         if (!VENDOR.equals(userFound.getType())) throw new UserIsNotVendorException("El usuario no es un vendedor");
 
-        List<UserVendorDTO> followersListDTO = userRepository.getAllFollowers(userFound.getFollowersId())
+        List<UserVendorDto> followersListDTO = userRepository.getAllFollowers(userFound.getFollowersId())
                 .stream()
-                .map(UserVendorDTO::new)
+                .map(UserVendorDto::new)
                 .toList();
         if ("name_asc".equals(order)) {
             followersListDTO =
                     followersListDTO.stream()
-                            .sorted(Comparator.comparing(UserVendorDTO::getUserName))
+                            .sorted(Comparator.comparing(UserVendorDto::getUserName))
                             .toList();
         }else if ("name_desc".equals(order)){
             followersListDTO =
                     followersListDTO.stream()
-                            .sorted(Comparator.comparing(UserVendorDTO::getUserName, Comparator.reverseOrder()))
+                            .sorted(Comparator.comparing(UserVendorDto::getUserName, Comparator.reverseOrder()))
                             .toList();
         }else if (order!=null){
             throw new InvalidDataException("Se envió un dato de ordenamiento inválido");
         }
-        return new VendorFollowerListDTO(userId, userFound.getName(), followersListDTO);
+        return new VendorFollowerListDto(userId, userFound.getName(), followersListDTO);
     }
 
 

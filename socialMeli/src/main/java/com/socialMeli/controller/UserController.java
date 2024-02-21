@@ -1,5 +1,5 @@
 package com.socialMeli.controller;
-import com.socialMeli.dto.response.VendorFollowerListDTO;
+import com.socialMeli.dto.response.VendorFollowerListDto;
 
 import com.socialMeli.dto.response.FollowedListDto;
 import com.socialMeli.dto.response.UserUnfollowedDto;
@@ -17,9 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final IUserService userService;
 
-
     @GetMapping("/users/{userId}/followers/list")
-    public ResponseEntity<VendorFollowerListDTO> getVendorFollowers(@PathVariable Integer userId,
+    public ResponseEntity<VendorFollowerListDto> getVendorFollowers(@PathVariable Integer userId,
                                                                     @RequestParam(required = false) String order) {
         return new ResponseEntity<>(userService.getVendorFollowers(userId, order), HttpStatus.OK);
     }
