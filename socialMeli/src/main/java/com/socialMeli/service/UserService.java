@@ -1,7 +1,6 @@
 package com.socialMeli.service;
 
 import com.socialMeli.dto.response.FollowedListDto;
-import com.socialMeli.dto.response.VendorDto;
 import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.dto.response.*;
 import com.socialMeli.entity.User;
@@ -91,22 +90,22 @@ public class UserService implements IUserService {
     @Override
     public FollowedListDto getFollowedList(Integer userId, String order) {
         User user = getUserByIdOrThrow(userId, "No se encontró al usuario");
-        List<VendorDto> followedVendors = user.getFollowedId().stream()
+        List<UserVendorDto> followedVendors = user.getFollowedId().stream()
                 .map(id -> userRepository.findUserByUserId(id).orElseThrow(() -> new NotFoundException("No se encontró al seguido")))
                 .filter(user1 -> VENDOR.equals(user1.getType()))
-                .map(u -> new VendorDto(u.getId(), u.getName()))
+                .map(u -> new UserVendorDto(u.getId(), u.getName()))
                 .toList();
         if (order == null) return new FollowedListDto(userId, user.getName(), followedVendors);
         return new FollowedListDto( userId, user.getName(), sortFollowedListByName(followedVendors, order));
     }
-    private List<VendorDto> sortFollowedListByName (List<VendorDto> vendorDtos, String order) {
+    private List<UserVendorDto> sortFollowedListByName (List<UserVendorDto> vendorDtos, String order) {
         if (order.equalsIgnoreCase("name_asc")) {
             return vendorDtos.stream()
-                    .sorted(Comparator.comparing(VendorDto::getUserName))
+                    .sorted(Comparator.comparing(UserVendorDto::getUserName))
                     .toList();
         } else if (order.equalsIgnoreCase("name_desc")) {
             return vendorDtos.stream()
-                    .sorted(Comparator.comparing(VendorDto::getUserName).reversed())
+                    .sorted(Comparator.comparing(UserVendorDto::getUserName).reversed())
                     .toList();
         }
         throw new InvalidDataException("Los datos de ordenamiento solicitados son incorrectos.");
