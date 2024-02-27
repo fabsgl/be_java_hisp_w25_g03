@@ -1,6 +1,7 @@
 package com.socialMeli.entity;
 
 import com.socialMeli.dto.request.PostDTO;
+import com.socialMeli.dto.response.PostDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,4 +32,5 @@ public class Post {
         this.price = postDto.getPrice();
         this.userId = postDto.getUserId();
     }
+
 }

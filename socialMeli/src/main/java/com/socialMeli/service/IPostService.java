@@ -4,6 +4,7 @@ import com.socialMeli.dto.response.PromotedVendorDto;
 import com.socialMeli.dto.response.PublicationDto;
 
 import com.socialMeli.dto.request.PostDTO;
+import com.socialMeli.dto.response.UserVendorPromotedPost;
 
 
 public interface IPostService {
@@ -12,4 +13,6 @@ public interface IPostService {
     void addPost(PostDTO post);
 
     PromotedVendorDto obtainTheQuantityOfPromotedPostForOneVendor(Integer userId);
+
+    UserVendorPromotedPost getAllPromotedPostFromAVendor(Integer userId);
 }

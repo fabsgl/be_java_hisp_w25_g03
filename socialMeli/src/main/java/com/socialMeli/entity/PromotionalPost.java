@@ -20,5 +20,4 @@ public class PromotionalPost extends Post{
         this.hasPromo = postDTO.getHasPromo();
         this.discount = postDTO.getDiscount();
     }
-
 }

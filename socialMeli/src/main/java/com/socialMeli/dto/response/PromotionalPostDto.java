@@ -2,6 +2,7 @@ package com.socialMeli.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.socialMeli.entity.Post;
 import com.socialMeli.entity.Product;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,7 +25,8 @@ public class PromotionalPostDto extends PostDto {
           this.discount = discount;
      }
 
-     public PromotionalPostDto(Boolean has_promo, Double discount) {
+     public PromotionalPostDto(Post post, ProductDto productDto, Boolean has_promo, Double discount) {
+          super(post.getId(), post.getUserId(), post.getDate(), productDto, post.getCategory(), post.getPrice());
           this.hasPromo = has_promo;
           this.discount = discount;
      }

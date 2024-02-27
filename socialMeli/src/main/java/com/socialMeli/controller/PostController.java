@@ -17,11 +17,17 @@ public class PostController {
     private final IPostService postService;
 
     @GetMapping("/products/followed/{userId}/list")
+
     public ResponseEntity<PublicationDto> obtainLastPublicationsByTheFollowedVendors(
                                                             @PathVariable Integer userId,
                                                             @RequestParam(required = false) String order) {
         return ResponseEntity.ok().body(postService
                 .obtainLastPublicationsByTheFollowedVendors(userId, order));
+    }
+
+    @GetMapping("/products/promo-post/list")
+    public ResponseEntity<?> getAllPromotedPostFromAVendor(@RequestParam Integer user_id) {
+        return ResponseEntity.ok().body(postService.getAllPromotedPostFromAVendor(user_id));
     }
 
 

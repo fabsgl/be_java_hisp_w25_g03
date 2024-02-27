@@ -2,11 +2,7 @@ package com.socialMeli.service;
 
 import com.socialMeli.dto.request.PostDTO;
 import com.socialMeli.dto.request.PromotionalPostDTO;
-import com.socialMeli.dto.response.PostDto;
-import com.socialMeli.dto.response.ProductDto;
-import com.socialMeli.dto.response.PromotedVendorDto;
-import com.socialMeli.dto.response.PromotionalPostDto;
-import com.socialMeli.dto.response.PublicationDto;
+import com.socialMeli.dto.response.*;
 import com.socialMeli.entity.*;
 import com.socialMeli.entity.User;
 import com.socialMeli.exception.InvalidDataException;
@@ -89,6 +85,27 @@ public class PostService implements IPostService {
                 () -> new NotFoundException("El usuario no tiene publiaciones promocionadas.")
         ));
         return new PromotedVendorDto(userId, user.getName(), sortedPost.size());
+    }
+
+    @Override
+    public UserVendorPromotedPost getAllPromotedPostFromAVendor(Integer userId) {
+        User user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NotFoundException("No se encontro el usuario solicitado."));
+        List<Post> post = postRepository.getPromotedPostByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("El usuario no posee productos promocionados"));
+
+        List<PromotionalPostDto> promotionalPostDtos = new ArrayList<>();
+        for (Post p: post){
+            promotionalPostDtos.add(
+                    new PromotionalPostDto(
+                            p,
+                            convertProductToDto(productRepository.getProductById(p.getProductId())
+                                    .orElseThrow(() -> new NotFoundException("Error al buscar el producto"))),
+                            ((PromotionalPost) p).getHasPromo(),
+                            ((PromotionalPost) p).getDiscount()
+                    )
+            );
+        }
+        return new UserVendorPromotedPost(user.getId(), user.getName(),  promotionalPostDtos);
     }
 
     private void validatePost(PostDTO post) {
