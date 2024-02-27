@@ -1,23 +1,29 @@
 package com.socialMeli.controller;
 
-import com.socialMeli.dto.response.*;
-
+import com.socialMeli.dto.response.FollowedListDto;
+import com.socialMeli.dto.response.MessageDto;
+import com.socialMeli.dto.response.UserUnfollowedDto;
+import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
 @AllArgsConstructor
-public class UserController {
+public final class UserController {
     private final IUserService userService;
 
     @GetMapping("/users/{userId}/followers/list")
     public ResponseEntity<FollowedListDto> getVendorFollowers(@PathVariable Integer userId,
-                                                                    @RequestParam(required = false) String order) {
+                                                              @RequestParam(required = false) String order) {
         return new ResponseEntity<>(userService.getVendorFollowers(userId, order), HttpStatus.OK);
     }
 
