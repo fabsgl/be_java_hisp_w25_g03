@@ -31,4 +31,8 @@ class UserRepositoryTest {
         Optional<User> user = userRepository.findUserByUserId(-1);
         Assertions.assertTrue(user.isEmpty());
     }
+
+
+    //T-0003 y T-0004 -> US-0003
+
 }
