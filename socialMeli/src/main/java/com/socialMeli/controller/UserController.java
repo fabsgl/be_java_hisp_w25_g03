@@ -2,7 +2,6 @@ package com.socialMeli.controller;
 
 import com.socialMeli.dto.response.FollowedListDto;
 import com.socialMeli.dto.response.MessageDto;
-import com.socialMeli.dto.response.UserUnfollowedDto;
 import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.service.IUserService;
 import lombok.AllArgsConstructor;
@@ -43,7 +42,7 @@ public final class UserController {
     }
 
     @PostMapping("/users/{userId}/unfollow/{userIdToUnfollow}")
-    public ResponseEntity<UserUnfollowedDto> unfollowUser(@PathVariable Integer userId, @PathVariable Integer userIdToUnfollow) {
+    public ResponseEntity<MessageDto> unfollowUser(@PathVariable Integer userId, @PathVariable Integer userIdToUnfollow) {
         return ResponseEntity.ok().body(userService.unfollowUser(userId, userIdToUnfollow));
     }
 }

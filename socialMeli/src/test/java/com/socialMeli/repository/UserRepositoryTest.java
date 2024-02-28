@@ -6,19 +6,28 @@ import com.socialMeli.exception.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserRepositoryTest {
 
     UserRepository userRepository;
+    User userVendor;
+    User userClient;
+
+    static Stream<Arguments> userIds() {
+        return Stream.of(
+                Arguments.arguments(1, 10),
+                Arguments.arguments(1, 9));
+    }
 
     User vendor;
     User client1;
@@ -27,9 +36,11 @@ class UserRepositoryTest {
     @BeforeEach
     void setUp() {
         userRepository = new UserRepository();
-        //vendor = new User(1,"luis",List.of(2,3),List.of(),UserType.VENDOR);
         client1 = new User(1,"Luciano Gonzalez",List.of(),List.of(8,10),UserType.CLIENT);
         client2 = new User(2,"Sofia Fernandez",List.of(),List.of(8),UserType.CLIENT);
+
+        userClient = userRepository.userBd.get(0);
+        userVendor = userRepository.userBd.get(9);
     }
 
     @Test
@@ -37,12 +48,25 @@ class UserRepositoryTest {
         Optional<User> user = userRepository.findUserByUserId(1);
         Assertions.assertTrue(user.isPresent());
     }
+
     @Test
     void findUserByUserIdNotFoundTest() {
         Optional<User> user = userRepository.findUserByUserId(-1);
         Assertions.assertTrue(user.isEmpty());
     }
 
+
+    @ParameterizedTest
+    @MethodSource("userIds")
+    void unfollowUserWhoDontFollowEachOtherTest(int userId, int userToUnfollowId) {
+        int userPos = userId - 1;
+        int userToUnfollowPos = userToUnfollowId - 1;
+        userRepository.unfollowUser(userRepository.userBd.get(userPos), userRepository.userBd.get(userToUnfollowPos));
+        assertTrue(userRepository.userBd.get(userPos)
+                .getFollowedId().stream().noneMatch(id -> id.equals(userToUnfollowId)));
+        assertTrue(userRepository.userBd.get(userToUnfollowPos)
+                .getFollowersId().stream().noneMatch(id -> id.equals(userId)));
+    }
 
     //T-0003 y T-0004 -> US-0003
     @Test
