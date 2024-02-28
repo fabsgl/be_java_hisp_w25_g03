@@ -1,6 +1,8 @@
-package com.socialMeli.socialMeli.service;
+package com.socialMeli.service;
 
 import com.socialMeli.controller.PostController;
+import com.socialMeli.dto.request.PostDTO;
+import com.socialMeli.dto.response.ProductDto;
 import com.socialMeli.dto.response.PublicationDto;
 import com.socialMeli.entity.Post;
 import com.socialMeli.entity.Product;
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.util.Assert;
 
@@ -95,5 +98,45 @@ public class PostServiceTest {
     void obtainLastPublicationsByTheFollowedVendorsTest_Throws_InvalidData(){
 
         assertThrows(InvalidDataException.class, () -> postService.obtainLastPublicationsByTheFollowedVendors(1,"asdas"));
+    }
+
+    @Test
+    void addPostOK(){
+        //Arrange
+        ProductDto product = new ProductDto(2, "productoTest", "test", "beekepers", "black", "-");
+        PostDTO postDTO = new PostDTO(1,LocalDate.now(),product,1,1000D);
+        Post finalPost = new Post(1, postDTO);
+        User user = new User(1, "pepe", List.of(1),List.of(1), UserType.VENDOR);
+        Optional<User> optional = Optional.of(user);
+
+        //Act
+        lenient().when(userRepository.findUserByUserId(1)).thenReturn(optional);
+        lenient().doNothing().when(productRepository).add(any(Product.class));
+        postService.addPost(postDTO);
+
+        //Assert
+        Mockito.verify(postRepository, Mockito.times(1)).add(finalPost);
+    }
+
+    @Test
+    void addPostUserNotFound(){
+        ProductDto product = new ProductDto(1, "productoTest", "test", "beekepers", "black", "-");
+        PostDTO postDTO = new PostDTO(1,LocalDate.now(),product,1, 1D);
+
+        assertThrows(NotFoundException.class, () -> postService.addPost(postDTO));
+    }
+    @Test
+    void addPostUserNotVendor(){
+        //Arrange
+        ProductDto product = new ProductDto(2, "productoTest", "test", "beekepers", "black", "-");
+        PostDTO postDTO = new PostDTO(1,LocalDate.now(),product,1,1000D);
+        User user = new User(1, "pepe", List.of(1),List.of(1), UserType.CLIENT);
+        Optional<User> optional = Optional.of(user);
+
+        //Act
+        lenient().when(userRepository.findUserByUserId(1)).thenReturn(optional);
+
+        //Assert
+        assertThrows(InvalidDataException.class, () -> postService.addPost(postDTO));
     }
 }
