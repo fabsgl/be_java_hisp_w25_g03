@@ -47,90 +47,119 @@ public class PostServiceTest {
     @InjectMocks
     PostService postService;
 
+    User recoveredUser;
+    Period oneWeeksPeriod;
+
+    List<Post> recoveredPosts;
+
+    Product recoveredProduct;
+
     @BeforeEach
     void setUp() {
-        User recoveredUser = new User(1, "Luciano Gonzalez", new ArrayList<>(), List.of(8, 10), UserType.CLIENT);
-        Period twoWeeksPeriod1W = Period.ofWeeks(1);
+        recoveredUser = new User(1, "Luciano Gonzalez", new ArrayList<>(), List.of(8, 10), UserType.VENDOR);
+        oneWeeksPeriod = Period.ofWeeks(1);
         Post recoveredPost1 = new Post(
-                1, LocalDate.now(),1,1,120000.0,8
+                1, LocalDate.now(), 1, 1, 120000.0, 8
         );
         Post recoveredPost2 = new Post(
-                2, LocalDate.now().minus(twoWeeksPeriod1W),1,1,120000.0,8
+                2, LocalDate.now().minus(oneWeeksPeriod), 1, 1, 120000.0, 8
         );
-        Product recoveredProduct = new Product(1,"Silla Gamer","Silla de PC","Negra","HyperX","Sin observaciones");
-        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(recoveredUser));
-        when(postRepository.getPostFromTheLastTwoWeeksByUserId(8)).thenReturn(Optional.of(List.of(recoveredPost1,recoveredPost2)));
-        when((productRepository.getProductById(anyInt()))).thenReturn(Optional.of(recoveredProduct));
+        recoveredPosts = List.of(recoveredPost1, recoveredPost2);
+        recoveredProduct = new Product(1, "Silla Gamer", "Silla de PC", "Negra", "HyperX", "Sin observaciones");
+
     }
 
     @Test
-    void obtainLastPublicationsByTheFollowedVendorsTest_Ok_defaultOrder(){
+    void obtainLastPublicationsByTheFollowedVendorsTest_Ok_defaultOrder() {
         // Arrange
-
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(recoveredUser));
+        when(postRepository.getPostFromTheLastTwoWeeksByUserId(8)).thenReturn(Optional.of(recoveredPosts));
+        when((productRepository.getProductById(anyInt()))).thenReturn(Optional.of(recoveredProduct));
         // Act
-        PublicationDto obtainedPublication = postService.obtainLastPublicationsByTheFollowedVendors(1,null);
+        PublicationDto obtainedPublication = postService.obtainLastPublicationsByTheFollowedVendors(1, null);
 
         // Assert
         verify(userRepository, atLeastOnce()).findUserByUserId(1);
         assertEquals(1, obtainedPublication.getUserId());
     }
+
     @Test
-    void obtainLastPublicationsByTheFollowedVendorsTest_Ok_ascOrder(){
+    void obtainLastPublicationsByTheFollowedVendorsTest_Ok_ascOrder() {
+        //Arrange
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(recoveredUser));
+        when(postRepository.getPostFromTheLastTwoWeeksByUserId(8)).thenReturn(Optional.of(recoveredPosts));
+        when((productRepository.getProductById(anyInt()))).thenReturn(Optional.of(recoveredProduct));
         // Act
-        PublicationDto obtainedPublication = postService.obtainLastPublicationsByTheFollowedVendors(1,"date_asc");
+        PublicationDto obtainedPublication = postService.obtainLastPublicationsByTheFollowedVendors(1, "date_asc");
 
         // Assert
         verify(userRepository, atLeastOnce()).findUserByUserId(1);
 
         assertTrue(obtainedPublication.getPostDTOList().get(0).getDate().isBefore(obtainedPublication.getPostDTOList().get(1).getDate()));
     }
+
     @Test
-    void obtainLastPublicationsByTheFollowedVendorsTest_Ok_descOrder(){
+    void obtainLastPublicationsByTheFollowedVendorsTest_Ok_descOrder() {
+        // Arrange
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(recoveredUser));
+        when(postRepository.getPostFromTheLastTwoWeeksByUserId(8)).thenReturn(Optional.of(recoveredPosts));
+        when((productRepository.getProductById(anyInt()))).thenReturn(Optional.of(recoveredProduct));
         // Act
-        PublicationDto obtainedPublication = postService.obtainLastPublicationsByTheFollowedVendors(1,"date_desc");
+        PublicationDto obtainedPublication = postService.obtainLastPublicationsByTheFollowedVendors(1, "date_desc");
 
         // Assert
         verify(userRepository, atLeastOnce()).findUserByUserId(1);
 
         assertTrue(obtainedPublication.getPostDTOList().get(0).getDate().isAfter(obtainedPublication.getPostDTOList().get(1).getDate()));
     }
-    @Test
-    void obtainLastPublicationsByTheFollowedVendorsTest_Throws_InvalidData(){
 
-        assertThrows(InvalidDataException.class, () -> postService.obtainLastPublicationsByTheFollowedVendors(1,"asdas"));
+    @Test
+    void obtainLastPublicationsByTheFollowedVendorsTest_Throws_InvalidData() {
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(recoveredUser));
+        when(postRepository.getPostFromTheLastTwoWeeksByUserId(8)).thenReturn(Optional.of(recoveredPosts));
+        when((productRepository.getProductById(anyInt()))).thenReturn(Optional.of(recoveredProduct));
+        assertThrows(InvalidDataException.class, () -> postService.obtainLastPublicationsByTheFollowedVendors(1, "asdas"));
     }
 
     @Test
-    void addPostOK(){
-        //Arrange
+    void obtainLastPublicationsByTheFollowedVendorsTest_Throws_NotFoundException() {
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> postService.obtainLastPublicationsByTheFollowedVendors(1, "asdas"));
+    }
+
+    @Test
+    void addPostOK() {
+        // Arrange
         ProductDto product = new ProductDto(2, "productoTest", "test", "beekepers", "black", "-");
-        PostDTO postDTO = new PostDTO(1,LocalDate.now(),product,1,1000D);
+        PostDTO postDTO = new PostDTO(1, LocalDate.now(), product, 1, 1000D);
         Post finalPost = new Post(1, postDTO);
-        User user = new User(1, "pepe", List.of(1),List.of(1), UserType.VENDOR);
+        User user = new User(1, "pepe", List.of(1), List.of(1), UserType.VENDOR);
         Optional<User> optional = Optional.of(user);
 
-        //Act
-        lenient().when(userRepository.findUserByUserId(1)).thenReturn(optional);
-        lenient().doNothing().when(productRepository).add(any(Product.class));
+
+        // Act
+        when(userRepository.findUserByUserId(1)).thenReturn(optional);
+        doNothing().when(productRepository).add(any(Product.class));
         postService.addPost(postDTO);
 
-        //Assert
-        Mockito.verify(postRepository, Mockito.times(1)).add(finalPost);
+        // Assert
+        verify(postRepository, times(1)).add(finalPost);
     }
 
     @Test
-    void addPostUserNotFound(){
+    void addPostUserNotFound() {
         ProductDto product = new ProductDto(1, "productoTest", "test", "beekepers", "black", "-");
-        PostDTO postDTO = new PostDTO(1,LocalDate.now(),product,1, 1D);
+        PostDTO postDTO = new PostDTO(1, LocalDate.now(), product, 1, 1D);
 
         assertThrows(NotFoundException.class, () -> postService.addPost(postDTO));
     }
+
     @Test
-    void addPostUserNotVendor(){
+    void addPostUserNotVendor() {
         //Arrange
         ProductDto product = new ProductDto(2, "productoTest", "test", "beekepers", "black", "-");
-        PostDTO postDTO = new PostDTO(1,LocalDate.now(),product,1,1000D);
-        User user = new User(1, "pepe", List.of(1),List.of(1), UserType.CLIENT);
+        PostDTO postDTO = new PostDTO(1, LocalDate.now(), product, 1, 1000D);
+        User user = new User(1, "pepe", List.of(1), List.of(1), UserType.CLIENT);
         Optional<User> optional = Optional.of(user);
 
         //Act
