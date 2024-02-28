@@ -1,6 +1,9 @@
 package com.social.meli.repository;
 
+
 import com.social.meli.entity.User;
+import com.social.meli.entity.UserType;
+import com.social.meli.exception.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,9 +11,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserRepositoryTest {
@@ -25,12 +30,18 @@ class UserRepositoryTest {
                 Arguments.arguments(1, 9));
     }
 
+    User vendor;
+    User client1;
+    User client2;
+
     @BeforeEach
     void setUp() {
         userRepository = new UserRepository();
+        client1 = new User(1,"Luciano Gonzalez",List.of(),List.of(8,10), UserType.CLIENT);
+        client2 = new User(2,"Sofia Fernandez",List.of(),List.of(8),UserType.CLIENT);
+
         userClient = userRepository.userBd.get(0);
         userVendor = userRepository.userBd.get(9);
-
     }
 
     @Test
@@ -45,16 +56,28 @@ class UserRepositoryTest {
         Assertions.assertTrue(user.isEmpty());
     }
 
+
     @ParameterizedTest
     @MethodSource("userIds")
     void unfollowUserWhoDontFollowEachOtherTest(int userId, int userToUnfollowId) {
         int userPos = userId - 1;
         int userToUnfollowPos = userToUnfollowId - 1;
         userRepository.unfollowUser(userRepository.userBd.get(userPos), userRepository.userBd.get(userToUnfollowPos));
-        Assertions.assertTrue(userRepository.userBd.get(userPos)
+        assertTrue(userRepository.userBd.get(userPos)
                 .getFollowedId().stream().noneMatch(id -> id.equals(userToUnfollowId)));
-        Assertions.assertTrue(userRepository.userBd.get(userToUnfollowPos)
+        assertTrue(userRepository.userBd.get(userToUnfollowPos)
                 .getFollowersId().stream().noneMatch(id -> id.equals(userId)));
     }
 
+    //T-0003 y T-0004 -> US-0003
+    @Test
+    void getAllFollowersFoundTest() {
+        List<User> expectedUsersList = List.of(client1, client2);
+        List<User> actualUsers = userRepository.getAllFollowers(List.of(1,2));
+        assertEquals(expectedUsersList, actualUsers);
+    }
+    @Test
+    void getAllFollowersNotFoundTest() {
+        assertThrows(NotFoundException.class, () -> userRepository.getAllFollowers(List.of(1,-2)));
+    }
 }
