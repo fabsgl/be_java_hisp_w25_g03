@@ -5,11 +5,13 @@ import com.socialMeli.dto.response.UserVendorDto;
 import com.socialMeli.dto.response.MessageDto;
 import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.entity.User;
+import com.socialMeli.entity.UserType;
 import com.socialMeli.exception.InvalidDataException;
 import com.socialMeli.exception.NotFoundException;
 import com.socialMeli.exception.UserFollowException;
 import com.socialMeli.exception.UserIsNotVendorException;
 import com.socialMeli.repository.IUserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +49,7 @@ class UserServiceTest {
     List<UserVendorDto> usuariosArrangeOrderAsc;
     List<UserVendorDto> usuariosArrangeOrderDesc;
     List<UserVendorDto> usuariosArrangeOrderNull;
+    private ArrayList<UserVendorDto> usuariosArrangeFollowedOrderNull;
 
     static Stream<Arguments> validFollowersValues() {
         return Stream.of(Arguments.of("name_asc"), Arguments.of("name_desc"), null);
@@ -64,6 +67,9 @@ class UserServiceTest {
         usuariosArrangeOrderNull = new ArrayList<>(List.of(new UserVendorDto(2, "diego"),
                 new UserVendorDto(3, "facundo"),
                 new UserVendorDto(4, "fabian")));
+
+        usuariosArrangeFollowedOrderNull = new ArrayList<>(List.of(new UserVendorDto(1, "agustin")));
+
 
         usuariosArrangeOrderAsc = new ArrayList<>(List.of(new UserVendorDto(2, "diego"),
                 new UserVendorDto(4, "fabian"),
@@ -152,4 +158,98 @@ class UserServiceTest {
         when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
         assertThrows(UserFollowException.class, () -> userService.unfollowUser(1, 2));
     }
+    @Test
+    void getFollowedListNoOrderTest() {
+        //Arrange
+        Integer userId = 2;
+        FollowedListDto expected = new FollowedListDto(2,"diego",usuariosArrangeFollowedOrderNull);
+
+
+        //Act
+
+        when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
+        when(userRepository.findUserByUserId(3)).thenReturn(Optional.of(new User(3, "luis", new ArrayList<>(), List.of(), UserType.CLIENT)));
+
+        FollowedListDto followedListDto = userService.getFollowedList(userId, null);
+
+        Assertions.assertEquals(expected,followedListDto);
+
+    }
+
+    @Test
+    void getFollowedListAscOrderTest() {
+        //Arrange
+        Integer userId = 2;
+        FollowedListDto expected = new FollowedListDto(2,"diego",usuariosArrangeFollowedOrderNull);
+
+
+        //Act
+
+        when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
+        when(userRepository.findUserByUserId(3)).thenReturn(Optional.of(new User(3, "luis", new ArrayList<>(), List.of(), UserType.CLIENT)));
+
+        FollowedListDto followedListDto = userService.getFollowedList(userId, "name_asc");
+
+        Assertions.assertEquals(expected,followedListDto);
+
+    }
+
+    @Test
+    void getFollowedListDescOrderTest() {
+        //Arrange
+        Integer userId = 2;
+        FollowedListDto expected = new FollowedListDto(2,"diego",usuariosArrangeFollowedOrderNull);
+
+
+        //Act
+
+        when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
+        when(userRepository.findUserByUserId(3)).thenReturn(Optional.of(new User(3, "luis", new ArrayList<>(), List.of(), UserType.CLIENT)));
+
+        FollowedListDto followedListDto = userService.getFollowedList(userId, "name_desc");
+
+        Assertions.assertEquals(expected,followedListDto);
+
+    }
+
+    @Test
+    void getFollowedListUserNotFoundTest() {
+        //Arrange
+
+        //Act
+
+        when(userRepository.findUserByUserId(2)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(NotFoundException.class,()->userService.getFollowedList(2, "name_desc"));
+
+    }
+
+    @Test
+    void getFollowedListFollowUserNotFoundTest() {
+        //Arrange
+
+        //Act
+
+        when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(NotFoundException.class,()->userService.getFollowedList(2, "name_desc"));
+
+    }
+
+    @Test
+    void getFollowedListOrderNotValidTest() {
+        //Arrange
+
+        //Act
+
+        when(userRepository.findUserByUserId(anyInt())).thenReturn(Optional.of(clientUser));
+
+        Assertions.assertThrows(InvalidDataException.class,()->userService.getFollowedList(2, "name_up"));
+
+    }
+
 }
