@@ -1,5 +1,6 @@
 package com.socialMeli.service;
 
+import com.socialMeli.dto.response.FollowedListDto;
 import com.socialMeli.dto.response.MessageDto;
 import com.socialMeli.dto.response.VendorFollowCountDto;
 import com.socialMeli.entity.User;
@@ -8,6 +9,7 @@ import com.socialMeli.exception.NotFoundException;
 import com.socialMeli.exception.UserFollowException;
 import com.socialMeli.exception.UserIsNotVendorException;
 import com.socialMeli.repository.IUserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -87,4 +89,16 @@ class UserServiceTest {
         when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
         assertThrows(UserFollowException.class, () -> userService.unfollowUser(1, 2));
     }
+    @Test
+    void getFollowedListNoOrderTest() {
+        Integer userId = 1;
+        String order = null;
+        FollowedListDto followedListDto = userService.getFollowedList(userId, null);
+
+        Assertions.assertNotNull(followedListDto);
+        Assertions.assertEquals(userId, followedListDto.getUserId());
+
+    }
+
+
 }
