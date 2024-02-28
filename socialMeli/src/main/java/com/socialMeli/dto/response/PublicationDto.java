@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import javax.validation.Valid;
 import java.util.List;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -16,5 +17,5 @@ public class PublicationDto {
     @JsonProperty("user_id")
     Integer userId;
     @JsonProperty("posts")
-    List<PostDto> postDTOList;
+    List<@Valid PostDto> postDTOList;
 }

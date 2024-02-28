@@ -12,6 +12,7 @@ import com.socialMeli.repository.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Positive;
 import java.util.Comparator;
 import java.util.List;
 
