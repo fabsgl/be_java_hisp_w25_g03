@@ -3,12 +3,12 @@ package com.socialMeli.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.Valid;
 import java.util.List;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
