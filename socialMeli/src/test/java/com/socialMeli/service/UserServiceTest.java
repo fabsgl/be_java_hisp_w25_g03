@@ -22,9 +22,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -45,6 +47,7 @@ class UserServiceTest {
     UserService userService;
     User vendorUser;
     User clientUser;
+    User clientUser2;
     List<User> usuariosArrange;
     List<UserVendorDto> usuariosArrangeOrderAsc;
     List<UserVendorDto> usuariosArrangeOrderDesc;
@@ -59,6 +62,7 @@ class UserServiceTest {
     void setUp() {
         vendorUser = new User(1, "agustin", List.of(2, 3), List.of(2), VENDOR);
         clientUser = new User(2, "diego", List.of(), List.of(1, 3), CLIENT);
+        clientUser2 = new User(4, "diego", List.of(), List.of(), CLIENT);
 
         usuariosArrange = List.of(clientUser,
                 new User(3, "facundo", List.of(), List.of(1), CLIENT),
@@ -80,6 +84,28 @@ class UserServiceTest {
                 new UserVendorDto(2, "diego")));
 
         when(userRepository.findUserByUserId(anyInt())).thenReturn(Optional.of(vendorUser));
+    }
+
+    @Test
+    void newFollowTestOK() {
+        //ARRANGE
+        MessageDto expectedMessage = new MessageDto("Comenzaste a seguir al usuario agustin");
+        when(userRepository.findUserByUserId(4)).thenReturn(Optional.of(clientUser2));
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
+        //ACT
+        MessageDto actualMessageDto = userService.newFollow(4, 1);
+        //ASSERT
+        verify(userRepository).followUser(any(User.class), any(User.class));
+        assertEquals(expectedMessage, actualMessageDto);
+    }
+    @Test
+    void newFollowTestThrowUserFollowException () {
+        //ARRANGE
+        MessageDto expectedMessage = new MessageDto("Ya sigues a este usuario");
+        when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
+        //ASSERT
+        assertThrows(UserFollowException.class, () -> userService.newFollow(2, 1));
     }
 
     @Test
