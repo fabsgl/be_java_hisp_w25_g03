@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -43,6 +44,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageDTO);
     }
 
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    protected ResponseEntity<?> handleValidationException(HandlerMethodValidationException ex) {
+        MessageDto messageDto = new MessageDto(ex.getDetailMessageArguments());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageDto);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
          Map<String, String> errors = new HashMap<>();
@@ -75,5 +82,4 @@ public class GlobalExceptionHandler {
         //ClaseExcepcion excepcion = new ClaseExpcepcion("Mensaje: ", ex.getMessage());
         return new ResponseEntity<>(ex, HttpStatus.BAD_REQUEST); //modificar segun excepcion
     }
-
 }

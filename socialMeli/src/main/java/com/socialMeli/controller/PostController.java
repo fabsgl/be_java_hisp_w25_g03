@@ -35,5 +35,4 @@ public class PostController {
         postService.addPost(postDto);
         return new ResponseEntity<>(new MessageDto("Post creado con éxito"), HttpStatus.OK);
     }
-
 }

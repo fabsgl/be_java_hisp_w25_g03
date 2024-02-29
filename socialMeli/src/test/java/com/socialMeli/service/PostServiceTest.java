@@ -131,11 +131,11 @@ public class PostServiceTest {
     void addPostOK() {
         // Arrange
         ProductDto product = new ProductDto(2, "productoTest", "test", "beekepers", "black", "-");
-        PostDTO postDTO = new PostDTO(1, LocalDate.now(), product, 1, 1000D);
-        Post finalPost = new Post(1, postDTO);
+        PostDTO expectedPostDTO = new PostDTO(1, LocalDate.now(), product, 1, 1000D);
+        PostDTO postDTO = new PostDTO(1, null, product, 1, 1000D);
+        Post expectedFinalPost = new Post(1, expectedPostDTO);
         User user = new User(1, "pepe", List.of(1), List.of(1), UserType.VENDOR);
         Optional<User> optional = Optional.of(user);
-
 
         // Act
         when(userRepository.findUserByUserId(1)).thenReturn(optional);
@@ -143,7 +143,7 @@ public class PostServiceTest {
         postService.addPost(postDTO);
 
         // Assert
-        verify(postRepository, times(1)).add(finalPost);
+        verify(postRepository, times(1)).add(expectedFinalPost);
     }
 
     @Test
