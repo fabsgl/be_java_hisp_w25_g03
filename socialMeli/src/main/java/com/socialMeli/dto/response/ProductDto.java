@@ -25,22 +25,22 @@ public class ProductDto {
     @JsonProperty("product_name")
     String name;
 
-    @NotNull(message = "El nombre de usuario no puede estar vacio")
+    @NotNull(message = "El tipo no puede estar vacio")
     @Size(min = 1, max = 15, message = "La longitud no puede superar los 15 caracteres")
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "La cadena no es válida")
     String type;
 
-    @NotNull(message = "El nombre de usuario no puede estar vacio")
-    @Size(min = 1, max = 25, message = "La longitud no puede superar los 15 caracteres")
+    @NotNull(message = "El nombre de la marca no puede estar vacio")
+    @Size(min = 1, max = 25, message = "La longitud no puede superar los 25 caracteres")
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "La cadena no es válida")
     String brand;
 
-    @NotNull(message = "El nombre de usuario no puede estar vacio")
+    @NotNull(message = "El color no puede estar vacio")
     @Size(min = 1, max = 15, message = "La longitud no puede superar los 15 caracteres")
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "La cadena no es válida")
     String color;
 
-    @Size(min = 1, max = 80, message = "La longitud no puede superar los 15 caracteres")
+    @Size(min = 1, max = 80, message = "La longitud no puede superar los 80 caracteres")
     @Pattern(regexp = "^[a-zA-Z0-9 ]*$", message = "La cadena no es válida")
     @JsonProperty("notes")
     String note;
