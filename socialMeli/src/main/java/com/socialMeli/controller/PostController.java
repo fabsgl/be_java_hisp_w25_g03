@@ -4,17 +4,18 @@ import com.socialMeli.dto.request.PostDTO;
 import com.socialMeli.dto.response.MessageDto;
 import com.socialMeli.dto.response.PublicationDto;
 import com.socialMeli.service.IPostService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 @RestController
 @AllArgsConstructor
+@Validated
 public class PostController {
 
     private final IPostService postService;
@@ -34,5 +35,4 @@ public class PostController {
         postService.addPost(postDto);
         return new ResponseEntity<>(new MessageDto("Post creado con éxito"), HttpStatus.OK);
     }
-
 }

@@ -3,6 +3,8 @@ package com.socialMeli.socialMeli.controller;
 import com.socialMeli.controller.UserController;
 import com.socialMeli.dto.response.MessageDto;
 import com.socialMeli.entity.User;
+import com.socialMeli.exception.NotFoundException;
+import com.socialMeli.repository.IUserRepository;
 import com.socialMeli.service.IUserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -23,18 +26,34 @@ public class UserControllerTest {
 
     @Mock
     IUserService userService;
+
     @InjectMocks
     UserController userController;
+    IUserRepository userRepository;
 
     @Test
-    void followTest_OK() {
+    void followTestOK() {
         //ARRANGE
-        String okMessage = "Comenzaste a seguir al usuario Victoria Acosta";
-        when(userService.newFollow(2,10)).thenReturn(new MessageDto(okMessage));
+        MessageDto expectedMessage = new MessageDto("Comenzaste a seguir al usuario Victoria Acosta");
+        when(userService.newFollow(2,10)).thenReturn(expectedMessage);
         //ACT
         ResponseEntity<MessageDto> response = userController.follow(2,10);
         //ASSERT
-        assertEquals(Objects.requireNonNull(response.getBody()).getMessage(), okMessage);
+        assertEquals((Objects.requireNonNull(response.getBody())).getMessage(), expectedMessage.getMessage());
+    }
+
+    @Test
+    void followTestUserNotFound() {
+        //Arrange
+        NotFoundException expectedMessage = new NotFoundException("No se encontro al usuario");
+        when(userRepository.findUserByUserId(1)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> userService.newFollow(1, 11));
+    }
+
+    @Test
+    void followTestUserVendorNotFound() {
+        NotFoundException expectedMessage = new NotFoundException("El usuario no es un vendedor");
+//        when(userService.get)
     }
 
 //    @Test
