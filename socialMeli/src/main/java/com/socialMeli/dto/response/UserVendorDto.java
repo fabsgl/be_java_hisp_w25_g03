@@ -2,11 +2,13 @@ package com.socialMeli.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.socialMeli.entity.User;
+import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
