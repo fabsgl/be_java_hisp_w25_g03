@@ -131,4 +131,7 @@ public class PostService implements IPostService {
                 product.getNote()
         );
     }
+    public Integer getIdCounter(){
+        return idCounter.get() + 1;
+    }
 }

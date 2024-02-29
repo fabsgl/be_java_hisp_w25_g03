@@ -1,56 +1,120 @@
-package com.socialMeli.socialMeli.controller;
+package com.socialMeli.controller;
 
-import com.socialMeli.controller.PostController;
-import com.socialMeli.dto.response.PostDto;
-import com.socialMeli.dto.response.ProductDto;
-import com.socialMeli.dto.response.PublicationDto;
-import com.socialMeli.service.IPostService;
+import com.socialMeli.entity.Post;
+import com.socialMeli.entity.Product;
+import com.socialMeli.repository.IPostRepository;
+import com.socialMeli.repository.IProductRepository;
+import com.socialMeli.repository.IUserRepository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
 
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class PostControllerTest {
-    @Mock
-    IPostService postService;
 
-    @InjectMocks
-    PostController postController;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Test
-    void obtainLastPublicationsByTheFollowedVendorsTest() {
-        // Arrange
-        PostDto obtainedPost = new PostDto(1, 1, LocalDate.now(),
-                new ProductDto(
-                        1, "Silla Gamer", "Gamer", "Racer", "Negra", "Completa"
-                ), 1, 120000.0
+    @Autowired
+    IPostRepository postRepository;
+
+    @Autowired
+    IProductRepository productRepository;
+
+    @BeforeEach
+    void setUp() {
+        postRepository.add(
+                new Post(1, LocalDate.now(), 1, 1, 12000.0, 8)
         );
-        PublicationDto obtainedPublicationDto = new PublicationDto(1,List.of(obtainedPost));
+        productRepository.add(
+                new Product(
+                        1, "Silla Gamer", "Gamer", "Racer",
+                        "Negra", "Completa"
+                )
+        );
 
-        when(postService.obtainLastPublicationsByTheFollowedVendors(1, "")).thenReturn(obtainedPublicationDto);
-
-        // Act
-        ResponseEntity<PublicationDto> response = postController.obtainLastPublicationsByTheFollowedVendors(1,"");
-
-        // Assert
-        verify(postService, atLeastOnce()).obtainLastPublicationsByTheFollowedVendors(1,"");
-        assertEquals(obtainedPost, Objects.requireNonNull(response.getBody()).getPostDTOList().get(0));
     }
 
+    @Test
+    void obtainLastPublicationsByTheFollowedVendorsTest_ok() throws Exception {
 
+        this.mockMvc.perform(
+                        get("/products/followed/1/list")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Silla Gamer")));
+    }
+
+    @Test
+    void obtainLastPublicationsByTheFollowedVendorsTest_throwsNotFound() throws Exception {
+
+        this.mockMvc.perform(
+                        get("/products/followed/12/list")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().is4xxClientError())
+                .andExpect(content().string(containsString("No se encontro al usuario")));
+    }
+
+    @Test
+    void obtainLastPublicationsByTheFollowedVendorsTest_throwsBadReq() throws Exception {
+
+        this.mockMvc.perform(
+                        get("/products/followed/aaa/list")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void obtainLastPublicationsByTheFollowedVendorsTest_throws() throws Exception {
+
+        this.mockMvc.perform(
+                        get("/products/followed/-1/list")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().is4xxClientError())
+                ;
+        ;
+    }
+
+    @Test
+    void addPost_ok() throws Exception {
+        String request = "{\n" +
+                "    \"user_id\": 8,\n" +
+                "    \"date\": \"14-02-2024\",\n" +
+                "    \"product\": {\n" +
+                "        \"product_id\": 10,\n" +
+                "        \"product_name\": \"Silla Gamer\",\n" +
+                "        \"type\": \"Gamer\",\n" +
+                "        \"brand\": \"Racer\",\n" +
+                "        \"color\": \"Black\",\n" +
+                "        \"notes\": \"Special Edition\"\n" +
+                "    },\n" +
+                "    \"category\": 100,\n" +
+                "    \"price\": 1500.50\n" +
+                "}";
+
+        this.mockMvc.perform(
+                        post("/products/post")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(request))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Post creado")));
+    }
 
 
 }
