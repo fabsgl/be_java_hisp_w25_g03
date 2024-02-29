@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Data
 @AllArgsConstructor
