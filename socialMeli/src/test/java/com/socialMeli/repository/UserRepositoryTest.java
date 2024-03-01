@@ -59,7 +59,6 @@ class UserRepositoryTest {
         Optional<User> user = userRepository.findUserByUserId(-1);
         Assertions.assertTrue(user.isEmpty());
     }
-
     @Test
     void followUserWhoDontFollowEachOtherTest() {
         userRepository.userBd.add(client3);

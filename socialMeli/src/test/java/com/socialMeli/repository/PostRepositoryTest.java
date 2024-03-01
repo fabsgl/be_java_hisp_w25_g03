@@ -1,16 +1,12 @@
 package com.socialMeli.repository;
 
 import com.socialMeli.entity.Post;
-import com.socialMeli.repository.IPostRepository;
-import com.socialMeli.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -35,7 +31,6 @@ public class PostRepositoryTest {
         //Assert
         assertEquals(3, returnedValue);
     }
-
     @Test
     void getPostFromTheLastTwoWeeksByUserId_Ok(){
         Optional<List<Post>> obtainedPosts = postRepository.getPostFromTheLastTwoWeeksByUserId(1);

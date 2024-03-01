@@ -190,9 +190,7 @@ class UserServiceTest {
         Integer userId = 2;
         FollowedListDto expected = new FollowedListDto(2,"diego",usuariosArrangeFollowedOrderNull);
 
-
         //Act
-
         when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
         when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
         when(userRepository.findUserByUserId(3)).thenReturn(Optional.of(new User(3, "luis", new ArrayList<>(), List.of(), UserType.CLIENT)));
@@ -200,7 +198,6 @@ class UserServiceTest {
         FollowedListDto followedListDto = userService.getFollowedList(userId, null);
 
         Assertions.assertEquals(expected,followedListDto);
-
     }
 
     @Test
@@ -209,9 +206,7 @@ class UserServiceTest {
         Integer userId = 2;
         FollowedListDto expected = new FollowedListDto(2,"diego",usuariosArrangeFollowedOrderNull);
 
-
         //Act
-
         when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
         when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
         when(userRepository.findUserByUserId(3)).thenReturn(Optional.of(new User(3, "luis", new ArrayList<>(), List.of(), UserType.CLIENT)));
@@ -219,7 +214,6 @@ class UserServiceTest {
         FollowedListDto followedListDto = userService.getFollowedList(userId, "name_asc");
 
         Assertions.assertEquals(expected,followedListDto);
-
     }
 
     @Test
@@ -228,9 +222,7 @@ class UserServiceTest {
         Integer userId = 2;
         FollowedListDto expected = new FollowedListDto(2,"diego",usuariosArrangeFollowedOrderNull);
 
-
         //Act
-
         when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
         when(userRepository.findUserByUserId(1)).thenReturn(Optional.of(vendorUser));
         when(userRepository.findUserByUserId(3)).thenReturn(Optional.of(new User(3, "luis", new ArrayList<>(), List.of(), UserType.CLIENT)));
@@ -246,11 +238,9 @@ class UserServiceTest {
         //Arrange
 
         //Act
-
         when(userRepository.findUserByUserId(2)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(NotFoundException.class,()->userService.getFollowedList(2, "name_desc"));
-
     }
 
     @Test
@@ -258,7 +248,6 @@ class UserServiceTest {
         //Arrange
 
         //Act
-
         when(userRepository.findUserByUserId(2)).thenReturn(Optional.of(clientUser));
         when(userRepository.findUserByUserId(1)).thenReturn(Optional.empty());
 
@@ -271,11 +260,8 @@ class UserServiceTest {
         //Arrange
 
         //Act
-
         when(userRepository.findUserByUserId(anyInt())).thenReturn(Optional.of(clientUser));
 
         Assertions.assertThrows(InvalidDataException.class,()->userService.getFollowedList(2, "name_up"));
-
     }
-
 }
