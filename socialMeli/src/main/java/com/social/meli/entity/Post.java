@@ -4,9 +4,7 @@ import com.social.meli.dto.request.PostDTO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
 
 import java.time.LocalDate;
 
@@ -14,7 +12,6 @@ import java.time.LocalDate;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
-@NoArgsConstructor
 public class Post {
     Integer id;
     LocalDate date;

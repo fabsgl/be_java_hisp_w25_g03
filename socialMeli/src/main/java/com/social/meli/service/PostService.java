@@ -15,7 +15,7 @@ import com.social.meli.repository.IProductRepository;
 import com.social.meli.repository.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -29,8 +29,11 @@ public class PostService implements IPostService {
     private final IPostRepository postRepository;
     private final IUserRepository userRepository;
     private final IProductRepository productRepository;
-    private static final AtomicInteger idCounter = new AtomicInteger(0);
+    public static final AtomicInteger idCounter = new AtomicInteger(0);
 
+    public int getAtomicInteger(){
+        return idCounter.get();
+    }
     @Override
     public void addPost(PostDTO postDto) {
         validatePost(postDto);
@@ -70,27 +73,9 @@ public class PostService implements IPostService {
     }
 
     private void validatePost(PostDTO post) {
-        if (post.getUserId() <= 0) {
-            throw new InvalidDataException("Error al enviar los datos: Usuario no válido");
-        }
         User user = userRepository.findUserByUserId(post.getUserId()).orElseThrow(() -> new NotFoundException("No se encontro al usuario"));
         if (!UserType.VENDOR.equals(user.getType())) {
             throw new InvalidDataException("El usuario " + user.getName() + " no es un vendedor");
-        }
-        if (post.getDate() == null) {
-            post.setDate(LocalDate.now());
-        }
-        if (post.getProduct() == null
-                || post.getProduct().getName() == null
-                || post.getProduct().getId() <= 0
-                || post.getProduct().getName().isEmpty()) {
-            throw new InvalidDataException("Error al enviar los datos: Producto no válido");
-        }
-        if (post.getCategory() <= 0) {
-            throw new InvalidDataException("Error al enviar los datos: Categoría no válida");
-        }
-        if (post.getPrice() <= 0) {
-            throw new InvalidDataException("Error al enviar los datos: Precio no válido");
         }
     }
 

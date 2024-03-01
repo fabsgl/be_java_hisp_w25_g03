@@ -1,16 +1,15 @@
 package com.social.meli.dto.response;
 
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
+
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @EqualsAndHashCode
+@Getter
+@Setter
 public class MessageDto {
     String message;
 }

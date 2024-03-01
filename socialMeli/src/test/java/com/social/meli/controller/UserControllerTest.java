@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,15 +86,15 @@ class UserControllerTest {
 
     static Stream<Arguments> invalidVendorFollowerCountData() {
         return Stream.of(
-                Arguments.of(-1, NOT_FOUND, "No se encontro al usuario"),
+                Arguments.of(11, NOT_FOUND, "No se encontro al usuario"),
                 Arguments.of(1, FORBIDDEN, "El usuario no es un vendedor")
         );
     }
 
     static Stream<Arguments> invalidFollowData() {
         return Stream.of(
-                Arguments.of(-1, 9, NOT_FOUND, "No se encontro al usuario"),
-                Arguments.of(9, -1, NOT_FOUND, "No se encontro al usuario"),
+                Arguments.of(11, 9, NOT_FOUND, "No se encontro al usuario"),
+                Arguments.of(9, 11, NOT_FOUND, "No se encontro al usuario"),
                 Arguments.of(9, 1, FORBIDDEN, "El usuario no es un vendedor"),
                 Arguments.of(1, 8, FORBIDDEN, "Ya sigues a este usuario")
         );
@@ -101,8 +102,8 @@ class UserControllerTest {
 
     static Stream<Arguments> invalidUnfollowData() {
         return Stream.of(
-                Arguments.of(-1, 9, NOT_FOUND, "No se encontro al usuario"),
-                Arguments.of(9, -1, NOT_FOUND, "No se encontro al usuario"),
+                Arguments.of(11, 9, NOT_FOUND, "No se encontro al usuario"),
+                Arguments.of(9, 11, NOT_FOUND, "No se encontro al usuario"),
                 Arguments.of(9, 1, FORBIDDEN, "El usuario no esta en tu lista de followed")
         );
     }
@@ -155,12 +156,21 @@ class UserControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidVendorFollowerCountData")
-    void getInvalidVendorFollowerCountOkTest(Integer userId, HttpStatus expectedStatusCode, String errorMessage) throws Exception {
+    void getInvalidVendorFollowerCountInvalidUserTest(Integer userId, HttpStatus expectedStatusCode, String errorMessage) throws Exception {
         mockMvc.perform(get("/users/{userId}/followers/count", userId))
                 .andDo(print())
                 .andExpect(status().is(expectedStatusCode.value()))
                 .andExpect(jsonContentType)
                 .andExpect(jsonPath("$.message").value(errorMessage));
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"/users/{userId}/followers/count","/users/{userId}/followed/list","/users/{userId}/followers/list"})
+    void invalidSingleIdTest(String endPoint) throws Exception {
+        mockMvc.perform(get(endPoint, -1))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonContentType)
+                .andExpect(jsonPath("$.userId").value("El id debe ser un valor positivo"));
     }
 
     @ParameterizedTest
