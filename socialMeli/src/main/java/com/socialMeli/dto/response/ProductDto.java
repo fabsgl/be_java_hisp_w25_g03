@@ -37,7 +37,7 @@ public class ProductDto {
 
     @NotNull(message = "El color no puede estar vacio")
     @Size(min = 1, max = 15, message = "La longitud no puede superar los 15 caracteres")
-    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "La cadena no es válida")
+    @Pattern(regexp = "^[a-zA-Z0-9 ]*$", message = "La cadena no es válida")
     String color;
 
     @Size(min = 1, max = 80, message = "La longitud no puede superar los 80 caracteres")

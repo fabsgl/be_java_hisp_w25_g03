@@ -1,4 +1,4 @@
-package com.socialMeli.socialMeli.repository;
+package com.socialMeli.repository;
 
 import com.socialMeli.entity.Post;
 import com.socialMeli.repository.IPostRepository;

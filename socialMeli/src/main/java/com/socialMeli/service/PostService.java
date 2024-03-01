@@ -126,8 +126,8 @@ public class PostService implements IPostService {
                 product.getId(),
                 product.getName(),
                 product.getType(),
-                product.getBrand(),
                 product.getColor(),
+                product.getBrand(),
                 product.getNote()
         );
     }

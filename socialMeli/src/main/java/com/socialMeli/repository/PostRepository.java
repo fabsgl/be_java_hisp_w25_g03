@@ -15,10 +15,11 @@ import java.util.stream.Collectors;
 @Repository
 public class PostRepository implements IPostRepository {
 
-    List<Post> postBd;
+    List<Post> postBd = new ArrayList<>();
 
     public PostRepository() {
-        this.postBd = new ArrayList<>();
+        this.postBd.add(new Post(1, LocalDate.now(), 1,
+                100, 1500.50, 10));
     }
 
     @Override

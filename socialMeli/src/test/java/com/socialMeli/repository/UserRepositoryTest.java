@@ -32,12 +32,17 @@ class UserRepositoryTest {
     User vendor;
     User client1;
     User client2;
+    User client3;
+    User client4;
 
     @BeforeEach
     void setUp() {
         userRepository = new UserRepository();
         client1 = new User(1,"Luciano Gonzalez",List.of(),List.of(8,10),UserType.CLIENT);
         client2 = new User(2,"Sofia Fernandez",List.of(),List.of(8),UserType.CLIENT);
+        client3 = new User(11,"Diego Diaz",List.of(),List.of(),UserType.CLIENT);
+        client4 = new User(12,"Facundo Salvia",List.of(),List.of(),UserType.VENDOR);
+
 
         userClient = userRepository.userBd.get(0);
         userVendor = userRepository.userBd.get(9);
@@ -55,6 +60,21 @@ class UserRepositoryTest {
         Assertions.assertTrue(user.isEmpty());
     }
 
+    @Test
+    void followUserWhoDontFollowEachOtherTest() {
+        userRepository.userBd.add(client3);
+        userRepository.userBd.add(client4);
+
+        userRepository.followUser(client3, client4);
+
+        System.out.println("user bd : -> " + userRepository.userBd);
+        System.out.println("user 11: " + userRepository.userBd.get(11));
+
+        assertTrue(userRepository.userBd.get(11)
+                .getFollowersId().stream().anyMatch((id -> id.equals(11))));
+//        assertTrue(userRepository.userBd.get(userToUnfollowPos)
+//                .getFollowersId().stream().noneMatch(id -> id.equals(userId)));
+    }
 
     @ParameterizedTest
     @MethodSource("userIds")
@@ -67,6 +87,7 @@ class UserRepositoryTest {
         assertTrue(userRepository.userBd.get(userToUnfollowPos)
                 .getFollowersId().stream().noneMatch(id -> id.equals(userId)));
     }
+
 
     //T-0003 y T-0004 -> US-0003
     @Test

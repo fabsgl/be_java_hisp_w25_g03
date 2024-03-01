@@ -9,10 +9,11 @@ import java.util.Optional;
 
 @Repository
 public class ProductRepository implements IProductRepository{
-    List<Product> productList;
+    List<Product> productList = new ArrayList<>();
 
     public ProductRepository() {
-        this.productList = new ArrayList<>();
+        this.productList.add(new Product(1, "Silla Gamer", "Gamer",
+                "Red", "Razer", "Premium"));
     }
 
 
