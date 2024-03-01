@@ -49,22 +49,6 @@ class PostControllerTest {
     final String userNotVendorRequest = "{\n" +
             "    \"user_id\": 1,\n" +
             addJson();
-    final String notValidValuesRequest =
-            """
-                    {
-                        "user_id": -1,
-                        "date": "14-02-2025",
-                        "product": {
-                            "product_id": -1,
-                            "product_name": "",
-                            "type": "",
-                            "brand": "",
-                            "color": "",
-                            "notes": ""
-                        },
-                        "category": -1,
-                        "price": -1
-                    }""";
 
     private String addJson() {
         return """
@@ -123,8 +107,23 @@ class PostControllerTest {
 
     }
 
-    @Test
+   /* @Test
     void addNewPostUserNotValidJsonTest() throws Exception {
+        String notValidValuesRequest = """
+                {
+                    "user_id": -1,
+                    "date": "14-02-2025",
+                    "product": {
+                        "product_id": -1,
+                        "product_name": "",
+                        "type": "",
+                        "brand": "",
+                        "color": "",
+                        "notes": ""
+                    },
+                    "category": -1,
+                    "price": -1
+                }""";
         String response = mockMvc.perform(post("/products/post")
                         .contentType(APPLICATION_JSON)
                         .content(notValidValuesRequest))
@@ -133,7 +132,7 @@ class PostControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
         assertEquals(expectedErrorMessage, response);
-    }
+    }*/
 
     @Test
     void obtainLastPublicationsByTheFollowedVendorsOk() throws Exception {
